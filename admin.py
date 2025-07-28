@@ -17,6 +17,7 @@ class SecureAdminIndexView(AdminIndexView):
         total_orders = Order.query.count()
         pending_orders = Order.query.filter_by(status='pending').count()
         
+        # Use default admin template with custom variables
         return self.render('admin/index.html', 
                          total_products=total_products,
                          products_in_stock=products_in_stock,
@@ -173,9 +174,7 @@ admin = Admin(
     app, 
     name='Administração - Barbearia Premium',
     template_mode='bootstrap4',
-    index_view=SecureAdminIndexView(name='Dashboard'),
-    base_template='admin/base.html',
-    static_url_path='/admin/static'
+    index_view=SecureAdminIndexView(name='Dashboard')
 )
 
 # Add model views
