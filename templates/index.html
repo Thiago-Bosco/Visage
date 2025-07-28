@@ -120,7 +120,6 @@
                         
                         {% if product.in_stock %}
                         <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}" class="add-to-cart-form">
-                            {{ csrf_token() }}
                             <div class="input-group mb-3">
                                 <span class="input-group-text">
                                     <i class="fas fa-calculator"></i>

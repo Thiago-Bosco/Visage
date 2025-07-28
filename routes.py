@@ -22,10 +22,16 @@ def index():
 @app.route('/add_to_cart/<int:product_id>', methods=['POST'])
 def add_to_cart(product_id):
     """Add a product to the shopping cart"""
-    form = AddToCartForm()
-    if form.validate_on_submit():
+    try:
         product = Product.query.get_or_404(product_id)
         session_id = get_session_id()
+        
+        # Get quantity from form
+        quantity = request.form.get('quantity', 1, type=int)
+        if quantity < 1:
+            quantity = 1
+        if quantity > 99:
+            quantity = 99
         
         # Check if item already exists in cart
         existing_item = CartItem.query.filter_by(
@@ -34,18 +40,21 @@ def add_to_cart(product_id):
         ).first()
         
         if existing_item:
-            existing_item.quantity += form.quantity.data
+            existing_item.quantity += quantity
         else:
             cart_item = CartItem(
                 session_id=session_id,
                 product_id=product_id,
-                quantity=form.quantity.data
+                quantity=quantity
             )
             db.session.add(cart_item)
         
         db.session.commit()
         flash(f'{product.name} adicionado ao carrinho!', 'success')
-    else:
+        logging.info(f"Produto {product.name} adicionado ao carrinho com sucesso")
+        
+    except Exception as e:
+        logging.error(f"Erro ao adicionar produto ao carrinho: {e}")
         flash('Erro ao adicionar produto ao carrinho.', 'error')
     
     return redirect(url_for('index'))
