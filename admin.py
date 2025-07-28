@@ -27,7 +27,7 @@ class ProductAdminView(ModelView):
     """Admin view for Product model"""
     
     # List view configuration
-    column_list = ['id', 'name', 'category', 'price', 'in_stock', 'created_at']
+    column_list = ['image_url', 'name', 'category', 'price', 'in_stock', 'created_at']
     column_searchable_list = ['name', 'description', 'category']
     column_filters = ['category', 'in_stock', 'created_at']
     column_sortable_list = ['id', 'name', 'category', 'price', 'created_at']
@@ -47,6 +47,9 @@ class ProductAdminView(ModelView):
     # Custom formatting
     column_formatters = {
         'price': lambda v, c, m, p: f'R$ {m.price:.2f}',
+        'in_stock': lambda v, c, m, p: '✅ Sim' if m.in_stock else '❌ Não',
+        'name': lambda v, c, m, p: f'<strong>{m.name}</strong>' if m.in_stock else f'<span class="text-muted">{m.name}</span>',
+        'image_url': lambda v, c, m, p: f'<img src="{m.image_url}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" alt="{m.name}">' if m.image_url else 'Sem imagem'
     }
     column_labels = {
         'id': 'ID',
@@ -56,7 +59,7 @@ class ProductAdminView(ModelView):
         'in_stock': 'Em Estoque',
         'created_at': 'Criado em',
         'description': 'Descrição',
-        'image_url': 'URL da Imagem'
+        'image_url': 'Imagem'
     }
     
     # Enable creation and editing
@@ -168,9 +171,11 @@ class OrderItemAdminView(ModelView):
 # Initialize Flask-Admin
 admin = Admin(
     app, 
-    name='Administração - Barbearia',
+    name='Administração - Barbearia Premium',
     template_mode='bootstrap4',
-    index_view=SecureAdminIndexView(name='Dashboard')
+    index_view=SecureAdminIndexView(name='Dashboard'),
+    base_template='admin/base.html',
+    static_url_path='/admin/static'
 )
 
 # Add model views
