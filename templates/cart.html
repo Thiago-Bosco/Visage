@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Carrinho de Compras - Barbearia Premium{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-5 fw-bold">
+                    <i class="fas fa-shopping-cart me-3"></i>
+                    Seu Carrinho
+                </h1>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Continuar Comprando
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if cart_items %}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Itens do Carrinho ({{ cart_items|length }})
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% for item in cart_items %}
+                    <div class="cart-item border-bottom p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <img src="{{ item.product.image_url or 'https://via.placeholder.com/100x100/8B4513/FFFFFF?text=Produto' }}" 
+                                     class="img-fluid rounded" 
+                                     alt="{{ item.product.name }}"
+                                     style="height: 80px; width: 80px; object-fit: cover;">
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="fw-bold mb-1">{{ item.product.name }}</h6>
+                                {% if item.product.category %}
+                                <span class="badge bg-secondary">{{ item.product.category }}</span>
+                                {% endif %}
+                                <p class="text-muted small mt-2 mb-0">
+                                    R$ {{ "%.2f"|format(item.product.price) }} cada
+                                </p>
+                            </div>
+                            <div class="col-md-3">
+                                <form method="POST" action="{{ url_for('update_cart', item_id=item.id) }}" class="d-flex align-items-center">
+                                    <label class="me-2 small">Qtd:</label>
+                                    <input type="number" 
+                                           name="quantity" 
+                                           value="{{ item.quantity }}" 
+                                           min="1" 
+                                           max="99"
+                                           class="form-control form-control-sm quantity-input" 
+                                           style="width: 70px;"
+                                           onchange="this.form.submit()">
+                                </form>
+                            </div>
+                            <div class="col-md-2 text-center">
+                                <div class="fw-bold text-success">
+                                    R$ {{ "%.2f"|format(item.total_price) }}
+                                </div>
+                            </div>
+                            <div class="col-md-1 text-center">
+                                <a href="{{ url_for('remove_from_cart', item_id=item.id) }}" 
+                                   class="btn btn-outline-danger btn-sm"
+                                   onclick="return confirm('Remover este item do carrinho?')"
+                                   title="Remover item">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <a href="{{ url_for('clear_cart') }}" 
+                   class="btn btn-outline-secondary"
+                   onclick="return confirm('Limpar todo o carrinho?')">
+                    <i class="fas fa-trash me-2"></i>
+                    Limpar Carrinho
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calculator me-2"></i>
+                        Resumo do Pedido
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Subtotal:</span>
+                        <span class="fw-bold">R$ {{ "%.2f"|format(total) }}</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Itens:</span>
+                        <span>{{ cart_items|length }} produto{{ 's' if cart_items|length != 1 else '' }}</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="h5">Total:</span>
+                        <span class="h5 text-success fw-bold">R$ {{ "%.2f"|format(total) }}</span>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <a href="{{ url_for('checkout') }}" class="btn btn-success btn-lg">
+                            <i class="fab fa-whatsapp me-2"></i>
+                            Finalizar no WhatsApp
+                        </a>
+                    </div>
+                    
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Você será redirecionado para o WhatsApp
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Shipping Info -->
+            <div class="card shadow-sm mt-3">
+                <div class="card-body text-center">
+                    <i class="fas fa-truck fa-2x text-primary mb-2"></i>
+                    <h6>Entrega & Retirada</h6>
+                    <p class="small text-muted mb-0">
+                        Combine a forma de entrega ou retirada diretamente pelo WhatsApp
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
+                    <h3 class="mb-3">Seu carrinho está vazio</h3>
+                    <p class="text-muted mb-4">Adicione alguns produtos incríveis ao seu carrinho!</p>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-shopping-bag me-2"></i>
+                        Ver Produtos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Auto-submit quantity changes with debounce
+let timeoutId;
+document.addEventListener('DOMContentLoaded', function() {
+    const quantityInputs = document.querySelectorAll('.quantity-input');
+    
+    quantityInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                this.form.submit();
+            }, 1000); // Wait 1 second after user stops typing
+        });
+    });
+});
+</script>
+{% endblock %}

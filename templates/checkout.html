@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Finalizar Pedido - Barbearia Premium{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold mb-4">
+                <i class="fab fa-whatsapp me-3 text-success"></i>
+                Finalizar Pedido
+            </h1>
+            <p class="lead text-muted mb-5">
+                Preencha seus dados e finalize o pedido via WhatsApp
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>
+                        Seus Dados
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="checkoutForm">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.customer_name.id }}" class="form-label fw-bold">
+                                    <i class="fas fa-user me-1"></i>
+                                    {{ form.customer_name.label.text }} *
+                                </label>
+                                {{ form.customer_name(class="form-control form-control-lg") }}
+                                {% if form.customer_name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.customer_name.errors %}
+                                            <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.customer_phone.id }}" class="form-label fw-bold">
+                                    <i class="fas fa-phone me-1"></i>
+                                    {{ form.customer_phone.label.text }}
+                                </label>
+                                {{ form.customer_phone(class="form-control form-control-lg", placeholder="(11) 99999-9999") }}
+                                {% if form.customer_phone.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.customer_phone.errors %}
+                                            <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Opcional - pode ser útil para contato sobre a entrega
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info" role="alert">
+                            <i class="fab fa-whatsapp me-2"></i>
+                            <strong>Como funciona:</strong> Após preencher seus dados, você será redirecionado para o WhatsApp com uma mensagem já formatada contendo todos os detalhes do seu pedido.
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('cart') }}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Voltar ao Carrinho
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fab fa-whatsapp me-2"></i>
+                                Enviar para WhatsApp
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clipboard-list me-2"></i>
+                        Resumo do Pedido
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for item in cart_items %}
+                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                        <img src="{{ item.product.image_url or 'https://via.placeholder.com/60x60/8B4513/FFFFFF?text=P' }}" 
+                             class="rounded me-3" 
+                             alt="{{ item.product.name }}"
+                             style="width: 50px; height: 50px; object-fit: cover;">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">{{ item.product.name }}</h6>
+                            <small class="text-muted">
+                                {{ item.quantity }}x R$ {{ "%.2f"|format(item.product.price) }}
+                            </small>
+                        </div>
+                        <div class="text-end">
+                            <span class="fw-bold text-success">
+                                R$ {{ "%.2f"|format(item.total_price) }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>R$ {{ "%.2f"|format(total) }}</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Total de itens:</span>
+                        <span>{{ cart_items|length }}</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between">
+                        <span class="h5 fw-bold">Total:</span>
+                        <span class="h5 fw-bold text-success">R$ {{ "%.2f"|format(total) }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Info -->
+            <div class="card shadow-sm mt-3">
+                <div class="card-body text-center">
+                    <i class="fas fa-credit-card fa-2x text-info mb-2"></i>
+                    <h6>Formas de Pagamento</h6>
+                    <p class="small text-muted mb-0">
+                        Combine a forma de pagamento diretamente com o vendedor no WhatsApp
+                    </p>
+                    <div class="mt-2">
+                        <i class="fas fa-money-bill-wave me-2 text-success"></i>
+                        <i class="fab fa-cc-visa me-2 text-primary"></i>
+                        <i class="fab fa-cc-mastercard me-2 text-warning"></i>
+                        <i class="fab fa-pix me-2 text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('checkoutForm');
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    form.addEventListener('submit', function(e) {
+        const originalContent = submitButton.innerHTML;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Preparando WhatsApp...';
+        submitButton.disabled = true;
+        
+        // The form will submit and redirect, but in case of error:
+        setTimeout(() => {
+            submitButton.innerHTML = originalContent;
+            submitButton.disabled = false;
+        }, 5000);
+    });
+    
+    // Phone number formatting
+    const phoneInput = document.getElementById('customer_phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.length >= 11) {
+                value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (value.length >= 7) {
+                value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+            } else if (value.length >= 3) {
+                value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+            }
+            
+            e.target.value = value;
+        });
+    }
+});
+</script>
+{% endblock %}
