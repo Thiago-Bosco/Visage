@@ -96,6 +96,10 @@ with app.app_context():
         db.session.commit()
         logging.info("Produtos iniciais criados com sucesso!")
 
+# Configure Flask-WTF
+from flask_wtf.csrf import CSRFProtect
+csrf = CSRFProtect(app)
+
 # Import routes and admin
 from routes import *  # noqa: F401, F403
 from admin import *  # noqa: F401, F403

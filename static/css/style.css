@@ -1,54 +1,70 @@
-/* Custom CSS for Barbershop Theme */
+/* Modern Barbershop Theme */
 
 :root {
-    --barbershop-primary: #8B4513;
-    --barbershop-secondary: #654321;
-    --barbershop-accent: #D2691E;
-    --barbershop-gold: #DAA520;
+    --barbershop-primary: #1a1a1a;
+    --barbershop-secondary: #2d2d2d;
+    --barbershop-accent: #c9a96e;
+    --barbershop-gold: #ffd700;
+    --barbershop-gradient: linear-gradient(135deg, #c9a96e 0%, #ffd700 100%);
+    --barbershop-dark-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
 }
 
-/* Override Bootstrap primary color with barbershop theme */
+/* Modern Button Styling */
 .btn-primary {
-    background-color: var(--barbershop-primary);
-    border-color: var(--barbershop-primary);
+    background: var(--barbershop-gradient);
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(201, 169, 110, 0.3);
+    transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
-    background-color: var(--barbershop-secondary);
-    border-color: var(--barbershop-secondary);
+    background: linear-gradient(135deg, #ffd700 0%, #c9a96e 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(201, 169, 110, 0.4);
 }
 
 .bg-primary {
-    background-color: var(--barbershop-primary) !important;
+    background: var(--barbershop-dark-gradient) !important;
 }
 
 .text-primary {
-    color: var(--barbershop-primary) !important;
+    color: var(--barbershop-accent) !important;
 }
 
-/* Product Cards */
+/* Modern Product Cards */
 .product-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
 }
 
 .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(201, 169, 110, 0.2) !important;
+    border-color: var(--barbershop-accent);
 }
 
 .card-img-top-wrapper {
     position: relative;
     overflow: hidden;
+    border-radius: 20px 20px 0 0;
 }
 
 .product-card .card-img-top {
-    transition: transform 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: brightness(0.9);
 }
 
 .product-card:hover .card-img-top {
-    transform: scale(1.05);
+    transform: scale(1.1) rotate(2deg);
+    filter: brightness(1.1);
 }
 
 /* Cart Items */
@@ -86,10 +102,92 @@
     animation: fadeInUp 0.6s ease;
 }
 
-/* Navbar Enhancements */
+/* Modern Navbar */
+.modern-navbar {
+    background: rgba(26, 26, 26, 0.95) !important;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(201, 169, 110, 0.2);
+    transition: all 0.3s ease;
+}
+
 .navbar-brand {
+    display: flex;
+    align-items: center;
     font-size: 1.5rem;
     letter-spacing: -0.5px;
+    text-decoration: none;
+}
+
+.brand-logo {
+    width: 50px;
+    height: 50px;
+    background: var(--barbershop-gradient);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 1.5rem;
+    color: #1a1a1a;
+    transition: all 0.3s ease;
+}
+
+.brand-logo:hover {
+    transform: rotate(10deg) scale(1.1);
+}
+
+.brand-text strong {
+    color: #fff;
+}
+
+.modern-nav-link {
+    position: relative;
+    padding: 10px 20px !important;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    margin: 0 5px;
+}
+
+.modern-nav-link:hover {
+    background: rgba(201, 169, 110, 0.1);
+    color: var(--barbershop-gold) !important;
+    transform: translateY(-2px);
+}
+
+.cart-link {
+    padding: 8px 16px !important;
+    border-radius: 12px;
+    background: rgba(201, 169, 110, 0.1);
+    border: 2px solid var(--barbershop-accent);
+    transition: all 0.3s ease;
+}
+
+.cart-link:hover {
+    background: var(--barbershop-accent);
+    color: #1a1a1a !important;
+    transform: scale(1.05);
+}
+
+.cart-icon {
+    position: relative;
+    display: inline-block;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s infinite;
 }
 
 /* Button Enhancements */
@@ -237,6 +335,157 @@
     .btn {
         border-width: 2px;
     }
+}
+
+/* Modern Hero Section */
+.hero-section {
+    min-height: 100vh;
+    background: var(--barbershop-dark-gradient);
+    position: relative;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 40%, rgba(201, 169, 110, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+}
+
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+.text-gradient {
+    background: var(--barbershop-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.text-light-gray {
+    color: #b0b0b0;
+}
+
+.text-gold {
+    color: var(--barbershop-gold);
+}
+
+.bg-gold {
+    background: var(--barbershop-gradient) !important;
+    color: #1a1a1a !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(201, 169, 110, 0.1);
+    border: 2px solid var(--barbershop-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 1.5rem;
+    color: var(--barbershop-gold);
+    transition: all 0.3s ease;
+}
+
+.feature-icon:hover {
+    background: var(--barbershop-accent);
+    color: #1a1a1a;
+    transform: scale(1.1);
+}
+
+.floating-elements {
+    position: relative;
+    height: 400px;
+}
+
+.floating-card {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: rgba(201, 169, 110, 0.1);
+    border: 2px solid var(--barbershop-accent);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--barbershop-gold);
+    animation: float 6s ease-in-out infinite;
+    backdrop-filter: blur(10px);
+}
+
+.floating-card:nth-child(1) {
+    top: 20%;
+    left: 20%;
+}
+
+.floating-card:nth-child(2) {
+    top: 60%;
+    right: 20%;
+    animation-delay: -2s;
+}
+
+.floating-card:nth-child(3) {
+    top: 10%;
+    right: 40%;
+    animation-delay: -4s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+.section-divider {
+    width: 100px;
+    height: 3px;
+    background: var(--barbershop-gradient);
+    border-radius: 2px;
+    margin: 20px auto;
+}
+
+.scroll-link {
+    scroll-behavior: smooth;
+}
+
+/* Enhanced Product Cards */
+.product-card .card-body {
+    background: rgba(45, 45, 45, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.product-card .badge {
+    background: var(--barbershop-gradient) !important;
+    color: #1a1a1a !important;
+    font-weight: 600;
+}
+
+/* Modern Input Groups */
+.input-group .input-group-text {
+    background: var(--barbershop-secondary);
+    border-color: var(--barbershop-accent);
+    color: var(--barbershop-gold);
+}
+
+.input-group .form-control {
+    background: rgba(45, 45, 45, 0.8);
+    border-color: var(--barbershop-accent);
+    color: #fff;
+}
+
+.input-group .form-control:focus {
+    background: rgba(45, 45, 45, 0.9);
+    border-color: var(--barbershop-gold);
+    box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
 }
 
 /* Reduced Motion */

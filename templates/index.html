@@ -3,48 +3,75 @@
 {% block title %}Catálogo de Produtos - Barbearia Premium{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="bg-primary text-white py-5">
-    <div class="container">
-        <div class="row align-items-center">
+<!-- Modern Hero Section -->
+<section class="hero-section position-relative overflow-hidden">
+    <div class="hero-background"></div>
+    <div class="container position-relative py-5">
+        <div class="row align-items-center min-vh-75">
             <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-3">
-                    <i class="fas fa-cut me-3"></i>
-                    Produtos Premium
-                </h1>
-                <p class="lead mb-4">
-                    Descubra nossa seleção exclusiva de produtos profissionais para cuidados masculinos. 
-                    Qualidade premium para o homem moderno.
-                </p>
-                <div class="d-flex gap-3">
-                    <div class="text-center">
-                        <i class="fas fa-shipping-fast fa-2x mb-2"></i>
-                        <p class="small mb-0">Entrega Rápida</p>
+                <div class="hero-content">
+                    <span class="badge bg-gold mb-3 px-3 py-2">Premium Quality</span>
+                    <h1 class="display-3 fw-bold mb-4 text-gradient">
+                        Barbearia
+                        <span class="d-block">Premium</span>
+                    </h1>
+                    <p class="lead mb-5 text-light-gray">
+                        Produtos profissionais selecionados especialmente para o homem moderno. 
+                        Qualidade excepcional, resultados extraordinários.
+                    </p>
+                    <div class="hero-features row g-4 mb-5">
+                        <div class="col-4">
+                            <div class="feature-icon">
+                                <i class="fas fa-shipping-fast"></i>
+                            </div>
+                            <p class="small text-gold mb-0">Entrega Rápida</p>
+                        </div>
+                        <div class="col-4">
+                            <div class="feature-icon">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <p class="small text-gold mb-0">Via WhatsApp</p>
+                        </div>
+                        <div class="col-4">
+                            <div class="feature-icon">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <p class="small text-gold mb-0">Premium</p>
+                        </div>
                     </div>
-                    <div class="text-center">
-                        <i class="fab fa-whatsapp fa-2x mb-2"></i>
-                        <p class="small mb-0">Pedido via WhatsApp</p>
-                    </div>
-                    <div class="text-center">
-                        <i class="fas fa-award fa-2x mb-2"></i>
-                        <p class="small mb-0">Qualidade Premium</p>
-                    </div>
+                    <a href="#produtos" class="btn btn-primary btn-lg px-5 scroll-link">
+                        <i class="fas fa-shopping-bag me-2"></i>
+                        Ver Produtos
+                    </a>
                 </div>
             </div>
-            <div class="col-lg-6 text-center">
-                <i class="fas fa-user-tie" style="font-size: 12rem; opacity: 0.3;"></i>
+            <div class="col-lg-6">
+                <div class="hero-image text-center">
+                    <div class="floating-elements">
+                        <div class="floating-card">
+                            <i class="fas fa-cut"></i>
+                        </div>
+                        <div class="floating-card delay-1">
+                            <i class="fas fa-beard"></i>
+                        </div>
+                        <div class="floating-card delay-2">
+                            <i class="fas fa-spray-can"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Products Section -->
-<section class="py-5">
+<section id="produtos" class="py-5 bg-dark">
     <div class="container">
-        <div class="row mb-4">
+        <div class="row mb-5">
             <div class="col-12 text-center">
-                <h2 class="display-5 fw-bold mb-3">Nossos Produtos</h2>
-                <p class="lead text-muted">Produtos selecionados especialmente para você</p>
+                <h2 class="display-4 fw-bold mb-3 text-gradient">Nossos Produtos</h2>
+                <p class="lead text-light-gray">Produtos selecionados especialmente para você</p>
+                <div class="section-divider mx-auto"></div>
             </div>
         </div>
 
@@ -93,6 +120,7 @@
                         
                         {% if product.in_stock %}
                         <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}" class="add-to-cart-form">
+                            {{ csrf_token() }}
                             <div class="input-group mb-3">
                                 <span class="input-group-text">
                                     <i class="fas fa-calculator"></i>
