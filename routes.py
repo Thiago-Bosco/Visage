@@ -154,8 +154,8 @@ def checkout():
 
 def generate_whatsapp_message(order):
     """Generate WhatsApp URL with order details"""
-    # WhatsApp number (you can change this)
-    whatsapp_number = "5511999999999"  # Replace with actual number
+    # WhatsApp number do vendedor
+    whatsapp_number = "5519981896803"
     
     # Build message
     message = f"🎯 *NOVO PEDIDO - BARBEARIA*\n\n"

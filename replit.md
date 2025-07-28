@@ -7,6 +7,11 @@ This is a Flask-based e-commerce application for a barbershop that specializes i
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Visual preference: Modern, functional design with premium appearance.
+
+## WhatsApp Configuration
+
+Vendor WhatsApp Number: +55 19 98189-6803 (configured for order processing)
 
 ## System Architecture
 
