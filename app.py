@@ -41,51 +41,83 @@ with app.app_context():
     if Product.query.count() == 0:
         initial_products = [
             Product(
-                name="Pomada Modeladora Premium",
-                description="Pomada de alta fixação para modelar cabelo e barba com acabamento natural",
-                price=35.90,
+                name="Suavecito Pomade Original",
+                description="Pomada à base d'água com fixação forte e brilho médio. Fácil de aplicar e remover.",
+                price=45.90,
                 image_url="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=300&h=300&fit=crop&auto=format",
                 category="Pomadas",
                 in_stock=True
             ),
             Product(
-                name="Óleo para Barba Artesanal",
-                description="Óleo natural para hidratação e crescimento da barba com fragrância amadeirada",
-                price=28.50,
+                name="Honest Amish Beard Oil",
+                description="Óleo 100% natural com óleos essenciais orgânicos para hidratar e amaciar a barba.",
+                price=52.00,
                 image_url="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=300&h=300&fit=crop&auto=format",
                 category="Óleos",
                 in_stock=True
             ),
             Product(
-                name="Shampoo Especializado",
-                description="Shampoo específico para cabelos masculinos com ação anti-caspa",
-                price=42.00,
+                name="American Crew Daily Shampoo",
+                description="Shampoo diário para cabelos normais a oleosos, com sistema de limpeza suave.",
+                price=38.50,
                 image_url="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=300&h=300&fit=crop&auto=format",
                 category="Shampoos",
                 in_stock=True
             ),
             Product(
-                name="Cera Modeladora Forte",
-                description="Cera de fixação extra forte para penteados que duram o dia todo",
-                price=31.90,
+                name="Layrite Superhold Pomade",
+                description="Pomada de fixação extra forte com acabamento natural, ideal para penteados elaborados.",
+                price=42.90,
                 image_url="https://images.unsplash.com/photo-1631729371254-42c2892f0e6e?w=300&h=300&fit=crop&auto=format",
-                category="Ceras",
+                category="Pomadas",
                 in_stock=True
             ),
             Product(
-                name="Balm Pós-Barba",
-                description="Bálsamo calmante e hidratante para uso após o barbear",
-                price=25.50,
+                name="Proraso After Shave Balm",
+                description="Bálsamo pós-barba com eucalipto e mentol, acalma e hidrata a pele após o barbear.",
+                price=28.90,
                 image_url="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=300&h=300&fit=crop&auto=format",
                 category="Pós-Barba",
                 in_stock=True
             ),
             Product(
-                name="Kit Barbear Completo",
-                description="Kit com navalha, pincel, sabão e toalha para barbear tradicional",
-                price=89.90,
+                name="The Art of Shaving Kit",
+                description="Kit completo com óleo pré-barbear, creme de barbear, bálsamo pós-barba e pincel.",
+                price=185.00,
                 image_url="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&auto=format",
                 category="Kits",
+                in_stock=True
+            ),
+            Product(
+                name="Beardbrand Beard Wash",
+                description="Shampoo específico para barba que limpa sem ressecar, mantendo os pelos macios.",
+                price=35.90,
+                image_url="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=300&fit=crop&auto=format",
+                category="Shampoos",
+                in_stock=True
+            ),
+            Product(
+                name="Murray's Superior Pomade",
+                description="Pomada clássica à base de petróleo com fixação extra forte e brilho intenso.",
+                price=25.90,
+                image_url="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=300&h=300&fit=crop&auto=format",
+                category="Pomadas",
+                in_stock=True
+            ),
+            Product(
+                name="Clubman Pinaud After Shave",
+                description="Loção pós-barba clássica com fragrância tradicional, refresca e tonifica a pele.",
+                price=22.50,
+                image_url="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=300&h=300&fit=crop&auto=format",
+                category="Pós-Barba",
+                in_stock=True
+            ),
+            Product(
+                name="Viking Revolution Beard Oil",
+                description="Óleo para barba com argan e jojoba, promove crescimento e elimina coceira.",
+                price=48.90,
+                image_url="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=300&h=300&fit=crop&auto=format",
+                category="Óleos",
                 in_stock=True
             )
         ]

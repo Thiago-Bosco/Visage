@@ -102,6 +102,7 @@ The application follows a traditional MVC (Model-View-Controller) architecture u
 - **Database**: SQLite database (barbershop.db)
 - **Location**: Local file in project root directory
 - **Connection Pooling**: Optimized for SQLite with appropriate timeout settings
+- **Products**: Real barbershop products from established brands (Suavecito, American Crew, Proraso, etc.)
 
 ### Environment Configuration:
 - **Session Secret**: Configurable via SESSION_SECRET environment variable
