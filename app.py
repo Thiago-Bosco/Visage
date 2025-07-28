@@ -20,10 +20,10 @@ app.secret_key = os.environ.get("SESSION_SECRET", "barbershop-secret-key-2024")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # configure the database, relative to the app instance folder
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///barbershop.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///barbershop.db"
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_recycle": 300,
-    "pool_pre_ping": True,
+    "pool_timeout": 20,
+    "pool_recycle": -1,
 }
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 

@@ -99,9 +99,9 @@ The application follows a traditional MVC (Model-View-Controller) architecture u
 ## Deployment Strategy
 
 ### Database Configuration:
-- **Development**: SQLite database (barbershop.db)
-- **Production**: Configurable via DATABASE_URL environment variable
-- **Connection Pooling**: Configured with pool recycling and pre-ping health checks
+- **Database**: SQLite database (barbershop.db)
+- **Location**: Local file in project root directory
+- **Connection Pooling**: Optimized for SQLite with appropriate timeout settings
 
 ### Environment Configuration:
 - **Session Secret**: Configurable via SESSION_SECRET environment variable
