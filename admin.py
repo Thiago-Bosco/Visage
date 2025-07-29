@@ -111,10 +111,10 @@ class ProductAdminView(ModelView):
         'price': lambda v, c, m, p: f'R$ {m.price:.2f}',
         'cost_price': lambda v, c, m, p: f'R$ {m.cost_price:.2f}',
         'profit_margin': lambda v, c, m, p: f'{m.profit_margin:.1f}%',
-        'stock_quantity': lambda v, c, m, p: f'<span class="badge bg-{"danger" if m.stock_quantity <= m.min_stock_level else "warning" if m.stock_quantity <= m.min_stock_level * 2 else "success"}">{m.stock_quantity}</span>',
+        'stock_quantity': lambda v, c, m, p: Markup(f'<span class="badge bg-{"danger" if m.stock_quantity <= m.min_stock_level else "warning" if m.stock_quantity <= m.min_stock_level * 2 else "success"}">{m.stock_quantity}</span>'),
         'in_stock': lambda v, c, m, p: '✅ Sim' if m.in_stock else '❌ Não',
-        'name': lambda v, c, m, p: f'<strong>{m.name}</strong>' if m.in_stock else f'<span class="text-muted">{m.name}</span>',
-        'image_url': lambda v, c, m, p: f'<img src="{m.image_url}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" alt="{m.name}">' if m.image_url else 'Sem imagem'
+        'name': lambda v, c, m, p: Markup(f'<strong>{m.name}</strong>') if m.in_stock else Markup(f'<span class="text-muted">{m.name}</span>'),
+        'image_url': lambda v, c, m, p: Markup(f'<img src="{m.image_url}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" alt="{m.name}">') if m.image_url else 'Sem imagem'
     }
     
     column_labels = {
@@ -138,27 +138,26 @@ class ProductAdminView(ModelView):
     
     def on_model_change(self, form, model, is_created):
         """Handle stock adjustments on product update"""
+        # Auto-update in_stock based on quantity
+        model.in_stock = model.stock_quantity > 0
+        
         if hasattr(form, 'stock_adjustment') and form.stock_adjustment.data:
             adjustment = form.stock_adjustment.data
             reason = form.adjustment_reason.data or 'Ajuste via admin'
             
-            if not is_created:
+            if not is_created and model.id:
                 # Create stock movement
+                old_quantity = model.stock_quantity - adjustment
                 movement = StockMovement(
                     product_id=model.id,
                     movement_type='increase' if adjustment > 0 else 'decrease',
                     quantity=abs(adjustment),
-                    old_quantity=model.stock_quantity,
-                    new_quantity=model.stock_quantity + adjustment,
+                    old_quantity=old_quantity,
+                    new_quantity=model.stock_quantity,
                     reason=reason,
                     created_by='Admin'
                 )
-                model.stock_quantity = max(0, model.stock_quantity + adjustment)
-                model.in_stock = model.stock_quantity > 0
                 db.session.add(movement)
-        
-        # Auto-update in_stock based on quantity
-        model.in_stock = model.stock_quantity > 0
     
     # Enable features
     can_create = True
@@ -177,7 +176,7 @@ class StockMovementAdminView(ModelView):
     column_default_sort = ('created_at', True)
     
     column_formatters = {
-        'movement_type': lambda v, c, m, p: f'<span class="badge bg-{"success" if m.movement_type == "increase" else "danger"}">{m.movement_type.title()}</span>',
+        'movement_type': lambda v, c, m, p: Markup(f'<span class="badge bg-{"success" if m.movement_type == "increase" else "danger"}">{m.movement_type.title()}</span>'),
         'quantity': lambda v, c, m, p: f'+{m.quantity}' if m.movement_type == 'increase' else f'-{m.quantity}',
         'created_at': lambda v, c, m, p: m.created_at.strftime('%d/%m/%Y %H:%M')
     }
@@ -241,7 +240,7 @@ class OrderAdminView(ModelView):
     
     column_formatters = {
         'total_amount': lambda v, c, m, p: f'R$ {m.total_amount:.2f}',
-        'status': lambda v, c, m, p: f'<span class="badge bg-{"success" if m.status == "completed" else "warning" if m.status == "pending" else "danger"}">{m.status.title()}</span>',
+        'status': lambda v, c, m, p: Markup(f'<span class="badge bg-{"success" if m.status == "completed" else "warning" if m.status == "pending" else "danger"}">{m.status.title()}</span>'),
         'whatsapp_sent': lambda v, c, m, p: '✅ Sim' if m.whatsapp_sent else '❌ Não',
         'created_at': lambda v, c, m, p: m.created_at.strftime('%d/%m/%Y %H:%M')
     }

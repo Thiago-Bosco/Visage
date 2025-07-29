@@ -19,7 +19,7 @@ class Product(db.Model):
     max_stock_level = db.Column(db.Integer, default=100)
     cost_price = db.Column(db.Float, default=0.0)  # Purchase cost
     supplier_id = db.Column(db.Integer, db.ForeignKey('suppliers.id'))
-    supplier = db.Column(db.String(100))
+    supplier = db.Column(db.String(100))  # Nome do fornecedor para compatibilidade
     sku = db.Column(db.String(50), unique=True)  # Stock Keeping Unit
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
