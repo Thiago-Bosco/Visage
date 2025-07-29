@@ -180,7 +180,7 @@ def generate_whatsapp_message(order):
     whatsapp_number = "5519981896803"
     
     # Build message
-    message = f"🎯 *NOVO PEDIDO - BARBEARIA*\n\n"
+    message = f"🎯 *NOVO PEDIDO - VISAGE*\n\n"
     message += f"👤 *Cliente:* {order.customer_name}\n"
     
     if order.customer_phone:
@@ -195,7 +195,7 @@ def generate_whatsapp_message(order):
         message += f"  Subtotal: R$ {item.total_price:.2f}\n\n"
     
     message += f"💰 *TOTAL: R$ {order.total_amount:.2f}*\n\n"
-    message += "✅ Pedido confirmado! Aguardo contato para combinar entrega/retirada."
+    message += "✅ Obrigado por escolher a Visage Distribuidora! Aguardo contato para combinar entrega/retirada."
     
     # Encode message for URL
     encoded_message = urllib.parse.quote(message)
