@@ -1,0 +1,189 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="admin-header-card">
+                <div class="admin-header-content">
+                    <div class="admin-header-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div>
+                        <h1 class="admin-header-title">Gerenciamento de Inventário</h1>
+                        <p class="admin-header-subtitle">Ferramentas avançadas para controle de estoque</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- Quick Stock Adjustment -->
+        <div class="col-lg-6 mb-4">
+            <div class="admin-activity-card">
+                <h2 class="admin-section-title">
+                    <i class="fas fa-edit text-warning me-2"></i>
+                    Ajuste Rápido de Estoque
+                </h2>
+                <div class="p-3">
+                    <a href="{{ url_for('inventorymanagementview.adjust_stock') }}" class="btn btn-warning btn-lg w-100">
+                        <i class="fas fa-plus-minus me-2"></i>
+                        Ajustar Estoque
+                    </a>
+                    <p class="text-muted mt-2 small">
+                        Adicione ou remova itens do estoque com registro de movimentação.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports and Analytics -->
+        <div class="col-lg-6 mb-4">
+            <div class="admin-activity-card">
+                <h2 class="admin-section-title">
+                    <i class="fas fa-chart-bar text-info me-2"></i>
+                    Relatórios e Análises
+                </h2>
+                <div class="p-3">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('stockmovement.index_view') }}" class="btn btn-outline-info">
+                            <i class="fas fa-list me-2"></i>
+                            Histórico de Movimentações
+                        </a>
+                        <a href="{{ url_for('product.index_view') }}?flt1_6=" class="btn btn-outline-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Produtos com Estoque Baixo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Grid -->
+    <div class="row">
+        <div class="col-12">
+            <div class="admin-actions-card">
+                <h2 class="admin-section-title">
+                    <i class="fas fa-bolt text-gold me-2"></i>
+                    Ações Rápidas
+                </h2>
+                <div class="admin-actions-grid">
+                    <a href="{{ url_for('product.create_view') }}" class="admin-action-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Novo Produto</span>
+                    </a>
+                    <a href="{{ url_for('supplier.create_view') }}" class="admin-action-btn">
+                        <i class="fas fa-truck"></i>
+                        <span>Novo Fornecedor</span>
+                    </a>
+                    <a href="{{ url_for('product.index_view') }}" class="admin-action-btn">
+                        <i class="fas fa-search"></i>
+                        <span>Buscar Produtos</span>
+                    </a>
+                    <a href="{{ url_for('order.index_view') }}" class="admin-action-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Ver Pedidos</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.admin-header-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.admin-header-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.admin-header-icon {
+    font-size: 3rem;
+    opacity: 0.8;
+}
+
+.admin-header-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.admin-header-subtitle {
+    margin: 5px 0 0 0;
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+.admin-activity-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    border: none;
+    overflow: hidden;
+}
+
+.admin-section-title {
+    background: #f8f9fa;
+    margin: 0;
+    padding: 20px 25px;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.admin-actions-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.admin-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.admin-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #495057;
+    transition: all 0.3s ease;
+}
+
+.admin-action-btn:hover {
+    background: #e9ecef;
+    border-color: #6c757d;
+    color: #495057;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.admin-action-btn i {
+    font-size: 1.5rem;
+}
+
+.text-gold {
+    color: #ffd700 !important;
+}
+</style>
+
+{% endblock %}
