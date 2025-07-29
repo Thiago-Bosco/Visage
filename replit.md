@@ -1,8 +1,8 @@
-# Barbearia Premium E-commerce
+# Visage - Barbearia E-commerce
 
 ## Overview
 
-This is a Flask-based e-commerce application for a barbershop that specializes in selling premium men's grooming products. The application features a product catalog, shopping cart functionality, and order processing via WhatsApp integration. It includes an admin panel for product management and order tracking.
+This is a Flask-based e-commerce application for Visage barbershop that specializes in selling premium men's grooming products. The application features a product catalog, shopping cart functionality, and order processing via WhatsApp integration. It includes an admin panel for product management and order tracking.
 
 ## User Preferences
 

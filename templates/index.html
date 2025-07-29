@@ -107,18 +107,28 @@
                             <span class="h4 text-success fw-bold mb-0">
                                 R$ {{ "%.2f"|format(product.price) }}
                             </span>
-                            {% if product.in_stock %}
-                            <span class="badge bg-success">
-                                <i class="fas fa-check me-1"></i>Em Estoque
-                            </span>
+                            {% if product.stock_quantity > 0 %}
+                                {% if product.stock_quantity <= product.min_stock_level %}
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fas fa-exclamation me-1"></i>Últimas {{ product.stock_quantity }}
+                                    </span>
+                                {% elif product.stock_quantity <= 10 %}
+                                    <span class="badge bg-info">
+                                        <i class="fas fa-info me-1"></i>{{ product.stock_quantity }} disponíveis
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check me-1"></i>Em Estoque
+                                    </span>
+                                {% endif %}
                             {% else %}
-                            <span class="badge bg-danger">
-                                <i class="fas fa-times me-1"></i>Sem Estoque
-                            </span>
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times me-1"></i>Sem Estoque
+                                </span>
                             {% endif %}
                         </div>
                         
-                        {% if product.in_stock %}
+                        {% if product.stock_quantity > 0 %}
                         <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}" class="add-to-cart-form">
                             <div class="input-group mb-3">
                                 <span class="input-group-text">
@@ -129,7 +139,7 @@
                                        class="form-control" 
                                        value="1" 
                                        min="1" 
-                                       max="99"
+                                       max="{{ product.stock_quantity }}"
                                        aria-label="Quantidade">
                                 <button class="btn btn-primary" type="submit">
                                     <i class="fas fa-cart-plus me-2"></i>

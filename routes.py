@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, flash, request, session
 from app import app, db
-from models import Product, CartItem, Order, OrderItem
+from models import Product, CartItem, Order, OrderItem, StockMovement
 from forms import CheckoutForm, AddToCartForm
 import uuid
 import urllib.parse
@@ -15,7 +15,7 @@ def get_session_id():
 @app.route('/')
 def index():
     """Display the product catalog"""
-    products = Product.query.filter_by(in_stock=True).all()
+    products = Product.query.filter(Product.stock_quantity > 0).all()
     cart_count = get_cart_count()
     return render_template('index.html', products=products, cart_count=cart_count)
 
@@ -30,6 +30,12 @@ def add_to_cart(product_id):
         quantity = request.form.get('quantity', 1, type=int)
         if quantity < 1:
             quantity = 1
+        
+        # Check stock availability
+        if quantity > product.stock_quantity:
+            flash(f'Apenas {product.stock_quantity} unidades disponíveis de {product.name}!', 'warning')
+            return redirect(url_for('index'))
+        
         if quantity > 99:
             quantity = 99
         
@@ -40,7 +46,12 @@ def add_to_cart(product_id):
         ).first()
         
         if existing_item:
-            existing_item.quantity += quantity
+            # Check total quantity doesn't exceed stock
+            total_quantity = existing_item.quantity + quantity
+            if total_quantity > product.stock_quantity:
+                flash(f'Quantidade total excede estoque disponível! Máximo: {product.stock_quantity}', 'warning')
+                return redirect(url_for('index'))
+            existing_item.quantity = total_quantity
         else:
             cart_item = CartItem(
                 session_id=session_id,
@@ -122,8 +133,15 @@ def checkout():
         db.session.add(order)
         db.session.flush()  # Get the order ID
         
-        # Create order items
+        # Create order items and update stock
         for cart_item in cart_items:
+            product = cart_item.product
+            
+            # Check stock availability before processing
+            if cart_item.quantity > product.stock_quantity:
+                flash(f'Estoque insuficiente para {product.name}. Apenas {product.stock_quantity} disponíveis.', 'error')
+                return redirect(url_for('cart'))
+            
             order_item = OrderItem(
                 order_id=order.id,
                 product_id=cart_item.product_id,
@@ -131,6 +149,10 @@ def checkout():
                 unit_price=cart_item.product.price
             )
             db.session.add(order_item)
+            
+            # Update stock quantity using the model method
+            movement = product.update_stock(-cart_item.quantity, f'Venda - Pedido #{order.id}')
+            movement.reference_id = str(order.id)
         
         # Clear cart
         for cart_item in cart_items:
