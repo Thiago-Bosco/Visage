@@ -1,17 +1,18 @@
-from flask import render_template_string, request, redirect, url_for, flash, jsonify
-from flask_admin import Admin, BaseView, expose
+from flask import render_template_string, request, redirect, url_for, flash, jsonify, Blueprint
 from app import app, db
 from models import Product, Order, StockMovement, Supplier, OrderItem
 from datetime import datetime
 
-class AdminCRUDView(BaseView):
-    @expose('/')
-    def index(self):
-        # Dashboard completo
-        total_products = Product.query.count()
-        total_orders = Order.query.count()
-        low_stock_products = Product.query.filter(Product.stock_quantity <= 5).count()
-        recent_orders = Order.query.order_by(Order.created_at.desc()).limit(5).all()
+# Criar blueprint para o admin
+admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+@admin_bp.route('/')
+def index():
+    # Dashboard completo
+    total_products = Product.query.count()
+    total_orders = Order.query.count()
+    low_stock_products = Product.query.filter(Product.stock_quantity <= 5).count()
+    recent_orders = Order.query.order_by(Order.created_at.desc()).limit(5).all()
         
         html = '''
         <!DOCTYPE html>
@@ -111,17 +112,17 @@ class AdminCRUDView(BaseView):
         </body>
         </html>
         '''
-        return render_template_string(html, 
-                                    total_products=total_products,
-                                    total_orders=total_orders, 
-                                    low_stock=low_stock_products,
-                                    recent_orders=recent_orders)
+    return render_template_string(html, 
+                                total_products=total_products,
+                                total_orders=total_orders, 
+                                low_stock=low_stock_products,
+                                recent_orders=recent_orders)
 
-    @expose('/products')
-    def products_list(self):
-        page = request.args.get('page', 1, type=int)
-        per_page = 20
-        products = Product.query.paginate(page=page, per_page=per_page, error_out=False)
+@admin_bp.route('/products')
+def products_list():
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    products = Product.query.paginate(page=page, per_page=per_page, error_out=False)
         
         html = '''
         <!DOCTYPE html>
@@ -250,10 +251,10 @@ class AdminCRUDView(BaseView):
         </body>
         </html>
         '''
-        return render_template_string(html, products=products)
+    return render_template_string(html, products=products)
 
-    @expose('/products/new', methods=['GET', 'POST'])
-    def products_new(self):
+@admin_bp.route('/products/new', methods=['GET', 'POST'])
+def products_new():
         if request.method == 'POST':
             try:
                 # Criar novo produto
@@ -441,8 +442,8 @@ class AdminCRUDView(BaseView):
         '''
         return render_template_string(html)
 
-    @expose('/products/edit/<int:id>', methods=['GET', 'POST'])
-    def products_edit(self, id):
+@admin_bp.route('/products/edit/<int:id>', methods=['GET', 'POST'])
+def products_edit(id):
         product = Product.query.get_or_404(id)
         
         if request.method == 'POST':
@@ -649,8 +650,8 @@ class AdminCRUDView(BaseView):
         '''
         return render_template_string(html, product=product)
 
-    @expose('/products/delete/<int:id>')
-    def products_delete(self, id):
+@admin_bp.route('/products/delete/<int:id>')
+def products_delete(id):
         product = Product.query.get_or_404(id)
         try:
             db.session.delete(product)
@@ -662,8 +663,8 @@ class AdminCRUDView(BaseView):
         
         return redirect(url_for('admin.products_list'))
 
-    @expose('/orders')
-    def orders_list(self):
+@admin_bp.route('/orders')
+def orders_list():
         page = request.args.get('page', 1, type=int)
         per_page = 20
         orders = Order.query.order_by(Order.created_at.desc()).paginate(page=page, per_page=per_page, error_out=False)
@@ -747,8 +748,8 @@ class AdminCRUDView(BaseView):
         '''
         return render_template_string(html, orders=orders)
 
-    @expose('/suppliers')
-    def suppliers_list(self):
+@admin_bp.route('/suppliers')
+def suppliers_list():
         suppliers = Supplier.query.all()
         
         html = '''
@@ -828,7 +829,7 @@ class AdminCRUDView(BaseView):
         '''
         return render_template_string(html, suppliers=suppliers)
 
-# Admin CRUD completo e funcional
-admin = Admin(app, name='Admin CRUD - Visage', index_view=AdminCRUDView(name='Dashboard'))
+# Registrar o blueprint no app
+app.register_blueprint(admin_bp)
 
-print("Admin CRUD completo configurado!")
+print("Admin CRUD customizado configurado sem Flask-Admin!")

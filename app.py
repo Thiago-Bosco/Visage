@@ -36,12 +36,12 @@ with app.app_context():
     
     db.create_all()
     
-    # Usar admin simples em vez do complexo
+    # Carregar apenas o admin customizado, sem Flask-Admin
     try:
-        import admin_simple  # noqa: F401
-        print("Admin simples carregado com sucesso!")
+        import admin_crud  # noqa: F401
+        print("Admin CRUD customizado carregado com sucesso!")
     except Exception as e:
-        print(f"Erro ao carregar admin simples: {e}")
+        print(f"Erro ao carregar admin customizado: {e}")
     
     # Create some initial products if none exist
     from models import Product
@@ -199,6 +199,5 @@ with app.app_context():
 from flask_wtf.csrf import CSRFProtect
 # csrf = CSRFProtect(app)  # Disabled temporarily
 
-# Import routes and admin
+# Import routes apenas
 from routes import *  # noqa: F401, F403
-from admin import *  # noqa: F401, F403

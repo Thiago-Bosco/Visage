@@ -1,0 +1,66 @@
+AtributoErro
+AttributeError: 'tuple' object não tem nenhum atributo 'items'
+
+Traceback (última ligação mais recente)
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\flask\app.py", linha 1536, em __call__
+retornar self.wsgi_app(environ, start_response)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\werkzeug\middleware\proxy_fix.py", linha 183, em __call__
+retornar self.app(environ, start_response)
+       ^^^^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\flask\app.py", linha 1514, em wsgi_app
+resposta = self.handle_exception(e)
+           ^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\flask\app.py", linha 1511, em wsgi_app
+resposta = self.full_dispatch_request()
+           ^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\flask\app.py", linha 919, em full_dispatch_request
+rv = self.handle_user_exception(e)
+     ^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\flask\app.py", linha 917, em full_dispatch_request
+rv = self.dispatch_request()
+     ^^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\flask\app.py", linha 902, em dispatch_request
+retornar self.ensure_sync(self.view_functions[rule.endpoint])(**view_args) # type: ignore[no-any-return]
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\flask_admin\base.py", linha 69, em inner
+retornar self._run_view(f, *args, **kwargs)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\flask_admin\base.py", linha 369, em _run_view
+retorne fn(eu, *args, **kwargs)
+       ^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\flask_admin\model\base.py", linha 2093, em create_view
+forma = auto.criar_forma()
+       ^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\flask_admin\model\base.py", linha 1332, em create_form
+retornar self._create_form_class(get_form_data(), obj=obj)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\wtforms\form.py", linha 209, em __call__
+tipo de retorno.__call__(cls, *args, **kwargs)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\flask_admin\form\__init__.py", linha 22, em __init__
+super(BaseForm, self).__init__(formdata=formdata, obj=obj, prefix=prefix, **kwargs)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\wtforms\form.py", linha 281, em __init__
+super().__init__(self._unbound_fields, meta=meta_obj, prefix=prefix)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\wtforms\form.py", linha 49, em __init__
+campo = meta.bind_field(self, unbound_field, options)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\wtforms\meta.py", linha 28, em bind_field
+retornar unbound_field.bind(form=form, **options)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\wtforms\fields\core.py", linha 387, em bind
+retornar self.field_class(*self.args, **kw)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Arquivo "C:\Usuários\thiag\AppData\Local\Programas\Python\Python313\Lib\site-packages\wtforms\fields\core.py", linha 133, em __init__
+para k, v em flags.items():
+            ^^^^^^^^^^
+AttributeError: 'tuple' object não tem nenhum atributo 'items'
+O depurador pegou uma exceção em seu aplicativo WSGI. Já podes observe o rastreamento que levou ao erro.
+Para alternar entre o traceback interativo e o de texto simples, você pode clicar no título "Traceback". A partir do rastreamento de texto você também pode criar uma pasta dele. Para execução de código, passe o mouse sobre o quadro que deseja depurar e clique no ícone do console no lado direito.
+
+Você pode executar código Python arbitrário nos quadros de pilha e há alguns ajudantes extras disponíveis para introspecção:
+
+dump()mostra todas as variáveis no quadro
+dump(obj)despeja tudo o que se sabe sobre o objeto
