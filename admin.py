@@ -201,14 +201,7 @@ class ProductAdminView(ModelView):
     form_columns = ['name', 'description', 'price', 'cost_price', 'stock_quantity', 'min_stock_level', 'max_stock_level', 
                    'supplier', 'sku', 'image_url', 'category', 'in_stock']
     
-    form_extra_fields = {
-        'stock_adjustment': IntegerField('Ajuste de Estoque', 
-                                       description='Digite um número positivo para adicionar ou negativo para remover estoque',
-                                       validators=[Optional()]),
-        'adjustment_reason': StringField('Motivo do Ajuste', 
-                                       description='Descreva o motivo do ajuste de estoque',
-                                       validators=[Optional()])
-    }
+    # Removido form_extra_fields que causava erro
     
     form_widget_args = {
         'description': {'rows': 5},
@@ -250,27 +243,7 @@ class ProductAdminView(ModelView):
     }
     
     def on_model_change(self, form, model, is_created):
-        """Handle stock adjustments on product update"""
-        if hasattr(form, 'stock_adjustment') and form.stock_adjustment.data:
-            adjustment = form.stock_adjustment.data
-            reason = form.adjustment_reason.data or 'Ajuste via admin'
-            
-            if not is_created:
-                # Create stock movement
-                movement = StockMovement(
-                    product_id=model.id,
-                    movement_type='increase' if adjustment > 0 else 'decrease',
-                    quantity=abs(adjustment),
-                    old_quantity=model.stock_quantity,
-                    new_quantity=model.stock_quantity + adjustment,
-                    reason=reason,
-                    created_by='Admin'
-                )
-                model.stock_quantity = max(0, model.stock_quantity + adjustment)
-                model.in_stock = model.stock_quantity > 0
-                db.session.add(movement)
-        
-        # Auto-update in_stock based on quantity
+        """Auto-update in_stock based on quantity"""
         model.in_stock = model.stock_quantity > 0
     
     # Enable features
@@ -382,7 +355,6 @@ admin = Admin(
     app, 
     name='Administração - Visage',
     template_mode='bootstrap4',
-    base_template='admin/layout.html',
     index_view=SecureAdminIndexView(name='Dashboard')
 )
 
