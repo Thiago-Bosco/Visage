@@ -2,19 +2,10 @@
 
 {% block head_css %}
     {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Quick patches for Flask-Admin integration */
         .navbar-brand {
             color: #d4af37 !important;
             font-weight: 600;
-        }
-        
-        .nav-pills .nav-link.active {
-            background-color: #d4af37;
-            color: #000;
         }
         
         .btn-primary {
@@ -26,133 +17,6 @@
         .btn-primary:hover {
             background-color: #b8952f;
             border-color: #b8952f;
-            color: #000;
-        }
-        
-        .admin-content-wrapper {
-            padding: 15px;
-        }
-        
-        /* Fix any content overflow */
-        .model-list {
-            overflow-x: auto;
-        }
-        
-        .help-block {
-            color: #6c757d;
-            font-size: 0.875rem;
-        }
-        
-        /* Form styling */
-        .form-control:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
-        }
-        
-        /* Pagination */
-        .pagination .page-item.active .page-link {
-            background-color: #d4af37;
-            border-color: #d4af37;
-            color: #000;
-        }
-        
-        .pagination .page-link {
-            color: #d4af37;
-        }
-        
-        /* Alert styling */
-        .alert-success {
-            background-color: rgba(25, 135, 84, 0.15);
-            color: #19a974;
-            border-color: rgba(25, 135, 84, 0.3);
-        }
-        
-        .alert-danger {
-            background-color: rgba(220, 53, 69, 0.15);
-            color: #dc3545;
-            border-color: rgba(220, 53, 69, 0.3);
-        }
-        
-        .alert-warning {
-            background-color: rgba(255, 193, 7, 0.15);
-            color: #ffc107;
-            border-color: rgba(255, 193, 7, 0.3);
-        }
-        
-        /* Make sure dropdown menus are visible against dark backgrounds */
-        .dropdown-menu {
-            background-color: #2c2c2c;
-            border: 1px solid #444;
-        }
-        
-        .dropdown-item {
-            color: #f8f9fa;
-        }
-        
-        .dropdown-item:hover, .dropdown-item:focus {
-            background-color: #3a3a3a;
-            color: #d4af37;
         }
     </style>
 {% endblock %}
-
-{% block access_control %}
-    {% if current_user.is_authenticated %}
-        <div class="btn-group">
-            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-user-circle me-2"></i>
-                Administrador
-            </button>
-            <div class="dropdown-menu dropdown-menu-end">
-                <a href="{{ url_for('admin.index') }}" class="dropdown-item">
-                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="{{ url_for('index') }}" class="dropdown-item">
-                    <i class="fas fa-store me-2"></i>Ir para a loja
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="{{ url_for('logout') }}" class="dropdown-item">
-                    <i class="fas fa-sign-out-alt me-2"></i>Sair
-                </a>
-            </div>
-        </div>
-    {% endif %}
-{% endblock %}
-
-{% block tail_js %}
-    {{ super() }}
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add notification badge to the menu items that need attention
-        // Example: Add a badge to the Stock Management menu item if there are low stock alerts
-        const lowStockItems = {{ low_stock_products|default(0) }};
-        if (lowStockItems > 0) {
-            const stockMenuItems = document.querySelectorAll('.nav-item a[href*="product"]');
-            stockMenuItems.forEach(function(item) {
-                const badge = document.createElement('span');
-                badge.className = 'badge rounded-pill bg-danger ms-2';
-                badge.textContent = lowStockItems;
-                item.appendChild(badge);
-            });
-        }
-        
-        // Add custom animations
-        const contentCards = document.querySelectorAll('.admin-card, .admin-stat-card, .admin-summary-card, .admin-activity-card, .admin-actions-card');
-        contentCards.forEach(function(card, index) {
-            setTimeout(function() {
-                card.classList.add('animated', 'fadeInUp');
-            }, index * 100);
-        });
-
-        // Fix any UI inconsistencies from Flask-Admin
-        const actionButtons = document.querySelectorAll('.btn-default');
-        actionButtons.forEach(function(btn) {
-            btn.classList.remove('btn-default');
-            btn.classList.add('btn-admin-secondary');
-        });
-    });
-    </script>
-{% endblock %}
-
-{% block body %}{% endblock %}
