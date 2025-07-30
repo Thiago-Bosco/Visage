@@ -1,0 +1,407 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container-fluid mt-4">
+    <!-- Enhanced Golden Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="admin-header-card">
+                <div class="admin-header-content">
+                    <div class="admin-header-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div>
+                        <h1 class="admin-header-title">Guia do Administrador</h1>
+                        <p class="admin-header-subtitle">Instruções para utilização do painel administrativo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Navigation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="admin-card p-4">
+                <h2 class="admin-section-title">
+                    <i class="fas fa-map-signs text-gold me-2"></i>
+                    Navegação Rápida
+                </h2>
+                <div class="row mt-3">
+                    <div class="col-md-3 mb-3">
+                        <a href="#products" class="btn btn-admin-secondary w-100">
+                            <i class="fas fa-box me-2"></i>
+                            Gerenciamento de Produtos
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="#stock" class="btn btn-admin-secondary w-100">
+                            <i class="fas fa-warehouse me-2"></i>
+                            Controle de Estoque
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="#orders" class="btn btn-admin-secondary w-100">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            Gestão de Pedidos
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="#reports" class="btn btn-admin-secondary w-100">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Relatórios
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <div class="col-12">
+            <div class="admin-card p-4">
+                <section id="intro" class="mb-5">
+                    <h2 class="admin-section-title">
+                        <i class="fas fa-info-circle text-gold me-2"></i>
+                        Introdução
+                    </h2>
+                    <p>
+                        Bem-vindo ao painel administrativo da <strong>Visage Distribuidora</strong>. Este sistema foi
+                        desenvolvido para simplificar a gestão completa do seu negócio, desde o controle de produtos
+                        e estoque até o acompanhamento de pedidos e clientes.
+                    </p>
+                    <p>
+                        Use a barra lateral esquerda para navegar entre as diferentes seções do sistema. O dashboard
+                        inicial apresenta uma visão geral do seu negócio com estatísticas importantes e alertas que
+                        precisam da sua atenção.
+                    </p>
+                </section>
+
+                <section id="products" class="mb-5">
+                    <h2 class="admin-section-title">
+                        <i class="fas fa-box text-gold me-2"></i>
+                        Gerenciamento de Produtos
+                    </h2>
+                    
+                    <h4 class="admin-subsection-title">Cadastro de Produtos</h4>
+                    <div class="ps-3 mb-4">
+                        <ol class="guide-list">
+                            <li>Acesse <strong>Estoque > Produtos</strong> no menu lateral</li>
+                            <li>Clique no botão <strong>Criar</strong> no canto superior direito</li>
+                            <li>Preencha os campos obrigatórios:
+                                <ul>
+                                    <li><strong>Nome:</strong> Nome do produto que será exibido para os clientes</li>
+                                    <li><strong>Preço:</strong> Valor de venda do produto</li>
+                                    <li><strong>Custo:</strong> Valor de aquisição (para cálculo de lucro)</li>
+                                    <li><strong>SKU:</strong> Código único do produto (importante para controle)</li>
+                                </ul>
+                            </li>
+                            <li>Os campos opcionais podem ser preenchidos para maior detalhamento:
+                                <ul>
+                                    <li><strong>Descrição:</strong> Informações detalhadas sobre o produto</li>
+                                    <li><strong>Imagem:</strong> URL da imagem para exibição</li>
+                                    <li><strong>Categoria:</strong> Agrupamento para organização</li>
+                                </ul>
+                            </li>
+                            <li>Para configurar o controle de estoque:
+                                <ul>
+                                    <li><strong>Quantidade em Estoque:</strong> Estoque inicial</li>
+                                    <li><strong>Nível Mínimo:</strong> Quando o sistema deve alertar sobre baixo estoque</li>
+                                    <li><strong>Nível Máximo:</strong> Capacidade máxima recomendada</li>
+                                </ul>
+                            </li>
+                            <li>Clique em <strong>Salvar</strong> para cadastrar o produto</li>
+                        </ol>
+
+                        <div class="alert alert-info mt-3">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            <strong>Dica:</strong> Use SKUs padronizados para facilitar a gestão. Por exemplo, para shampoo da marca X, use X-SH-001.
+                        </div>
+                    </div>
+
+                    <h4 class="admin-subsection-title">Edição e Exclusão</h4>
+                    <div class="ps-3">
+                        <p>Para editar um produto existente:</p>
+                        <ol class="guide-list">
+                            <li>Localize o produto na lista de produtos</li>
+                            <li>Clique no ícone de edição (lápis) na coluna de ações</li>
+                            <li>Atualize os campos necessários e clique em <strong>Salvar</strong></li>
+                        </ol>
+
+                        <p>Para excluir um produto:</p>
+                        <ol class="guide-list">
+                            <li>Localize o produto na lista de produtos</li>
+                            <li>Clique no ícone de exclusão (lixeira) na coluna de ações</li>
+                            <li>Confirme a exclusão na janela de diálogo</li>
+                        </ol>
+
+                        <div class="alert alert-warning mt-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Atenção:</strong> A exclusão de produtos só deve ser feita se o produto não tiver histórico de vendas ou movimentações. Caso contrário, é recomendado apenas desativar o produto marcando "Em estoque" como "Não".
+                        </div>
+                    </div>
+                </section>
+
+                <section id="stock" class="mb-5">
+                    <h2 class="admin-section-title">
+                        <i class="fas fa-warehouse text-gold me-2"></i>
+                        Controle de Estoque
+                    </h2>
+                    
+                    <h4 class="admin-subsection-title">Ajuste de Estoque</h4>
+                    <div class="ps-3 mb-4">
+                        <p>Para ajustar o estoque de um produto:</p>
+                        <ol class="guide-list">
+                            <li>Acesse <strong>Estoque > Gerenciar Estoque</strong> no menu lateral</li>
+                            <li>Selecione o produto que deseja ajustar no menu suspenso</li>
+                            <li>Informe a quantidade a ser ajustada:
+                                <ul>
+                                    <li><strong>Valores positivos:</strong> Para adicionar ao estoque (ex: +10)</li>
+                                    <li><strong>Valores negativos:</strong> Para remover do estoque (ex: -5)</li>
+                                </ul>
+                            </li>
+                            <li>Informe o motivo do ajuste para registro no histórico</li>
+                            <li>Clique em <strong>Salvar Ajuste</strong></li>
+                        </ol>
+
+                        <div class="alert alert-info mt-3">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            <strong>Dica:</strong> Sempre registre um motivo detalhado para facilitar o rastreamento das alterações e auditorias futuras.
+                        </div>
+                    </div>
+
+                    <h4 class="admin-subsection-title">Movimentações de Estoque</h4>
+                    <div class="ps-3 mb-4">
+                        <p>Para visualizar o histórico de movimentações:</p>
+                        <ol class="guide-list">
+                            <li>Acesse <strong>Estoque > Movimentações</strong> no menu lateral</li>
+                            <li>Use os filtros para localizar movimentações específicas:
+                                <ul>
+                                    <li><strong>Por produto:</strong> Digite o nome do produto no campo de pesquisa</li>
+                                    <li><strong>Por tipo:</strong> Filtre por entrada (increase) ou saída (decrease)</li>
+                                    <li><strong>Por data:</strong> Use os filtros de data para períodos específicos</li>
+                                </ul>
+                            </li>
+                        </ol>
+                        <p>Cada registro mostra o produto, quantidade alterada, estoque anterior, estoque atual, data e motivo da movimentação.</p>
+                    </div>
+
+                    <h4 class="admin-subsection-title">Alertas de Estoque</h4>
+                    <div class="ps-3">
+                        <p>O sistema gera alertas automaticamente quando:</p>
+                        <ul>
+                            <li>O estoque de um produto fica igual ou abaixo do nível mínimo configurado</li>
+                            <li>Um produto fica sem estoque (zerado)</li>
+                        </ul>
+                        <p>Estes alertas são exibidos no Dashboard principal e podem ser gerenciados nas seguintes formas:</p>
+                        <ol class="guide-list">
+                            <li>Adicionar mais estoque através da página <strong>Gerenciar Estoque</strong></li>
+                            <li>Ajustar o nível mínimo do produto se o valor atual não for adequado</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <section id="orders" class="mb-5">
+                    <h2 class="admin-section-title">
+                        <i class="fas fa-shopping-cart text-gold me-2"></i>
+                        Gestão de Pedidos
+                    </h2>
+                    
+                    <h4 class="admin-subsection-title">Visualização de Pedidos</h4>
+                    <div class="ps-3 mb-4">
+                        <p>Para visualizar todos os pedidos:</p>
+                        <ol class="guide-list">
+                            <li>Acesse <strong>Vendas > Pedidos</strong> no menu lateral</li>
+                            <li>Os pedidos são listados em ordem cronológica, com os mais recentes no topo</li>
+                            <li>Utilize os filtros para encontrar pedidos específicos:
+                                <ul>
+                                    <li><strong>Por cliente:</strong> Digite o nome do cliente</li>
+                                    <li><strong>Por status:</strong> Filtre por status (pendente, concluído, etc.)</li>
+                                    <li><strong>Por data:</strong> Selecione um período específico</li>
+                                </ul>
+                            </li>
+                            <li>Clique em um pedido para ver seus detalhes completos</li>
+                        </ol>
+                    </div>
+
+                    <h4 class="admin-subsection-title">Atualização de Status</h4>
+                    <div class="ps-3">
+                        <p>Para atualizar o status de um pedido:</p>
+                        <ol class="guide-list">
+                            <li>Clique no pedido que deseja atualizar</li>
+                            <li>Na página de detalhes, altere o campo <strong>Status</strong> para uma das opções:
+                                <ul>
+                                    <li><strong>Pendente:</strong> Pedido recebido, aguardando processamento</li>
+                                    <li><strong>Em processamento:</strong> Pedido está sendo preparado</li>
+                                    <li><strong>Enviado:</strong> Pedido foi despachado para o cliente</li>
+                                    <li><strong>Concluído:</strong> Pedido entregue e finalizado</li>
+                                    <li><strong>Cancelado:</strong> Pedido foi cancelado</li>
+                                </ul>
+                            </li>
+                            <li>Clique em <strong>Salvar</strong> para atualizar o status</li>
+                        </ol>
+
+                        <div class="alert alert-warning mt-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Importante:</strong> Ao cancelar um pedido, o sistema não restaura automaticamente o estoque. Se necessário, faça um ajuste manual para retornar os itens ao estoque.
+                        </div>
+                    </div>
+                </section>
+
+                <section id="reports" class="mb-5">
+                    <h2 class="admin-section-title">
+                        <i class="fas fa-chart-bar text-gold me-2"></i>
+                        Relatórios e Análises
+                    </h2>
+                    
+                    <h4 class="admin-subsection-title">Dashboard</h4>
+                    <div class="ps-3 mb-4">
+                        <p>O dashboard principal apresenta uma visão geral do seu negócio, incluindo:</p>
+                        <ul>
+                            <li><strong>Total de produtos</strong> e quantos estão em estoque</li>
+                            <li><strong>Valor do estoque</strong> em custo e preço de varejo</li>
+                            <li><strong>Alertas de estoque</strong> para produtos abaixo do nível mínimo</li>
+                            <li><strong>Total de pedidos</strong> e quantos estão pendentes</li>
+                            <li><strong>Movimentações recentes</strong> de estoque</li>
+                        </ul>
+                        <p>Acesse o dashboard a qualquer momento clicando em <strong>Dashboard</strong> no menu lateral.</p>
+                    </div>
+
+                    <h4 class="admin-subsection-title">Exportação de Dados</h4>
+                    <div class="ps-3">
+                        <p>Para exportar dados do sistema:</p>
+                        <ol class="guide-list">
+                            <li>Navegue até a lista que deseja exportar (Produtos, Pedidos, Movimentações)</li>
+                            <li>Aplique os filtros desejados para refinar os dados</li>
+                            <li>Clique no botão <strong>Export</strong> no canto superior direito</li>
+                            <li>Selecione o formato de exportação desejado (CSV, Excel, PDF, etc.)</li>
+                            <li>O arquivo será gerado e baixado automaticamente</li>
+                        </ol>
+
+                        <div class="alert alert-info mt-3">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            <strong>Dica:</strong> Exporte regularmente seus dados para backup e análises em ferramentas externas como Excel ou Google Sheets.
+                        </div>
+                    </div>
+                </section>
+
+                <section id="tips" class="mb-5">
+                    <h2 class="admin-section-title">
+                        <i class="fas fa-lightbulb text-gold me-2"></i>
+                        Dicas e Melhores Práticas
+                    </h2>
+                    
+                    <div class="ps-3">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-dark border-0">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-boxes text-gold me-2"></i>
+                                            Gestão de Estoque
+                                        </h5>
+                                        <ul class="mb-0">
+                                            <li>Faça contagens físicas periódicas para reconciliar o estoque</li>
+                                            <li>Configure níveis mínimos adequados para cada produto</li>
+                                            <li>Registre sempre o motivo das movimentações manuais</li>
+                                            <li>Verifique regularmente os alertas de estoque baixo</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-dark border-0">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-tags text-gold me-2"></i>
+                                            Organização de Produtos
+                                        </h5>
+                                        <ul class="mb-0">
+                                            <li>Use SKUs consistentes para fácil identificação</li>
+                                            <li>Categorize os produtos adequadamente</li>
+                                            <li>Mantenha as descrições dos produtos completas</li>
+                                            <li>Use imagens de qualidade para melhor visualização</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-dark border-0">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-shopping-cart text-gold me-2"></i>
+                                            Processamento de Pedidos
+                                        </h5>
+                                        <ul class="mb-0">
+                                            <li>Atualize o status dos pedidos em tempo real</li>
+                                            <li>Verifique diariamente os pedidos pendentes</li>
+                                            <li>Entre em contato com o cliente para informações incompletas</li>
+                                            <li>Documente qualquer alteração no pedido original</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-dark border-0">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-shield-alt text-gold me-2"></i>
+                                            Segurança e Backup
+                                        </h5>
+                                        <ul class="mb-0">
+                                            <li>Exporte regularmente seus dados para backup</li>
+                                            <li>Não compartilhe suas credenciais de acesso</li>
+                                            <li>Faça logout ao terminar de usar o sistema</li>
+                                            <li>Verifique regularmente o log de atividades</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="help">
+                    <h2 class="admin-section-title">
+                        <i class="fas fa-question-circle text-gold me-2"></i>
+                        Ajuda e Suporte
+                    </h2>
+                    
+                    <div class="ps-3">
+                        <p>Se precisar de assistência adicional com o sistema:</p>
+                        <ul>
+                            <li>Consulte a documentação completa em <a href="/admin/guide">Guia do Administrador</a></li>
+                            <li>Entre em contato com o suporte técnico pelo email <a href="mailto:suporte@visage.com.br">suporte@visage.com.br</a></li>
+                            <li>Ligue para (11) 1234-5678 em horário comercial</li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .guide-list li {
+        margin-bottom: 0.75rem;
+    }
+    
+    .admin-subsection-title {
+        margin-top: 1.5rem;
+    }
+    
+    section {
+        padding-top: 15px;
+    }
+    
+    /* Add some space for anchor links */
+    section::before {
+        content: "";
+        display: block; 
+        height: 60px;
+        margin: -60px 0 0;
+        visibility: hidden;
+    }
+</style>
+{% endblock %}

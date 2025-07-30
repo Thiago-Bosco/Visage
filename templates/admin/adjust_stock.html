@@ -1,0 +1,222 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+
+<div class="container-fluid mt-4">
+    <!-- Enhanced Golden Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="admin-header-card">
+                <div class="admin-header-content">
+                    <div class="admin-header-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div>
+                        <h1 class="admin-header-title">Ajuste de Estoque</h1>
+                        <p class="admin-header-subtitle">Ajuste manual de quantidades em estoque</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        <!-- Stock Adjustment Form -->
+        <div class="col-lg-6 mb-4">
+            <div class="admin-card p-4">
+                <h2 class="admin-section-title">
+                    <i class="fas fa-edit text-gold me-2"></i>
+                    Ajustar Estoque de Produto
+                </h2>
+                <form method="POST" action="{{ url_for('inventorymanagementview.adjust_stock') }}">
+                    <div class="mb-3">
+                        <label for="product_id" class="form-label">Selecione o Produto</label>
+                        <select class="form-select form-control-admin" id="product_id" name="product_id" required>
+                            <option value="">Selecione um produto...</option>
+                            {% for product in products %}
+                                <option value="{{ product.id }}">
+                                    {{ product.name }} | Estoque Atual: {{ product.stock_quantity }} | SKU: {{ product.sku or 'N/A' }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="quantity_change" class="form-label">Quantidade</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-boxes"></i>
+                            </span>
+                            <input type="number" class="form-control form-control-admin" id="quantity_change" name="quantity_change" required>
+                        </div>
+                        <div class="form-text">
+                            <ul>
+                                <li>Use valores positivos para adicionar estoque</li>
+                                <li>Use valores negativos para remover estoque</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="reason" class="form-label">Motivo do Ajuste</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-comment-alt"></i>
+                            </span>
+                            <input type="text" class="form-control form-control-admin" id="reason" name="reason" placeholder="Descreva o motivo do ajuste...">
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-admin-primary">
+                            <i class="fas fa-save me-2"></i>
+                            Salvar Ajuste
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Stock Information -->
+        <div class="col-lg-6">
+            <div class="admin-card p-4">
+                <h2 class="admin-section-title">
+                    <i class="fas fa-info-circle text-gold me-2"></i>
+                    Informações de Estoque
+                </h2>
+                
+                <div class="product-info mb-4" id="product-info">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Selecione um produto para ver os detalhes de estoque
+                    </div>
+                </div>
+
+                <div class="tips-section mt-4">
+                    <h4 class="admin-subsection-title">Dicas de Gerenciamento</h4>
+                    <ul class="tips-list">
+                        <li>
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            <strong>Ajustes positivos:</strong> Adicione estoque ao receber produtos de fornecedores
+                        </li>
+                        <li>
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            <strong>Ajustes negativos:</strong> Remova estoque por danos, perdas ou descontos internos
+                        </li>
+                        <li>
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            <strong>Registro detalhado:</strong> Sempre especifique o motivo do ajuste para histórico
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productSelect = document.getElementById('product_id');
+    const productInfo = document.getElementById('product-info');
+    
+    // Function to fetch and display product info
+    function updateProductInfo() {
+        const productId = productSelect.value;
+        
+        if (!productId) {
+            productInfo.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Selecione um produto para ver os detalhes de estoque
+                </div>`;
+            return;
+        }
+        
+        // Show loading state
+        productInfo.innerHTML = `
+            <div class="text-center py-3">
+                <div class="spinner-border text-gold" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+                <p class="mt-2">Carregando informações do produto...</p>
+            </div>`;
+        
+        // Find the selected product details from the dropdown option text
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        const productText = selectedOption.text;
+        
+        // Parse product details from the option text
+        const productName = productText.split('|')[0].trim();
+        const currentStock = productText.match(/Estoque Atual: (\d+)/)[1];
+        const sku = productText.match(/SKU: ([^|]+)$/)[1].trim();
+        
+        // Simulate a delay to show loading (in a real app, this would be an API call)
+        setTimeout(() => {
+            let statusClass = 'success';
+            if (currentStock <= 5) {
+                statusClass = 'danger';
+            } else if (currentStock <= 10) {
+                statusClass = 'warning';
+            }
+            
+            productInfo.innerHTML = `
+                <div class="card mb-3 border-0">
+                    <div class="card-body p-0">
+                        <h4 class="card-title">${productName}</h4>
+                        <h6 class="card-subtitle mb-2 text-muted">SKU: ${sku}</h6>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <div>
+                                <span class="text-muted">Estoque Atual:</span>
+                            </div>
+                            <div>
+                                <span class="badge bg-${statusClass} fs-6">${currentStock} unidades</span>
+                            </div>
+                        </div>
+                        
+                        <div class="progress mt-2" style="height: 8px;">
+                            <div class="progress-bar bg-${statusClass}" style="width: ${Math.min(currentStock * 5, 100)}%" 
+                                role="progressbar"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-${statusClass} mt-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${currentStock <= 5 ? 'exclamation-triangle' : 'info-circle'} me-3 fa-lg"></i>
+                        <div>
+                            ${currentStock <= 5 
+                                ? '<strong>Alerta de Estoque Baixo</strong><br>Este produto está com nível crítico de estoque.' 
+                                : currentStock <= 10 
+                                    ? '<strong>Estoque Limitado</strong><br>Este produto está com nível baixo de estoque.' 
+                                    : '<strong>Estoque Adequado</strong><br>Este produto possui estoque adequado.'}
+                        </div>
+                    </div>
+                </div>`;
+        }, 500);
+    }
+    
+    // Update product info when product selection changes
+    productSelect.addEventListener('change', updateProductInfo);
+});
+</script>
+
+{% endblock %}
+</style>
+{% endblock %}

@@ -50,29 +50,138 @@ class SecureAdminIndexView(AdminIndexView):
                          low_stock_alerts=low_stock_alerts)
 
 class InventoryManagementView(BaseView):
-    """Custom view for inventory management operations"""
+    """
+    Custom view for inventory management operations.
+    
+    This view provides functionality for:
+    - Adjusting product stock levels
+    - Recording stock movements with reasons
+    - Creating stock alerts when levels are low
+    """
     
     @expose('/')
     def index(self):
-        return self.render('admin/inventory_management.html')
+        """Redirect to the stock adjustment page by default"""
+        return self.redirect(url_for('inventorymanagementview.adjust_stock'))
     
     @expose('/adjust-stock', methods=['GET', 'POST'])
     def adjust_stock(self):
-        if request.method == 'POST':
-            product_id = request.form.get('product_id')
-            quantity_change = int(request.form.get('quantity_change', 0))
-            reason = request.form.get('reason', 'Ajuste manual')
-            
-            product = Product.query.get(product_id)
-            if product:
-                movement = product.update_stock(quantity_change, reason)
-                db.session.commit()
-                flash(f'Estoque do produto {product.name} ajustado com sucesso!', 'success')
-            else:
-                flash('Produto não encontrado!', 'error')
+        """
+        Handle stock adjustments for products.
         
-        products = Product.query.all()
+        POST: Process stock adjustment form submission
+        GET: Display the stock adjustment form
+        """
+        if request.method == 'POST':
+            try:
+                # Validate product selection
+                product_id = request.form.get('product_id')
+                if not product_id:
+                    flash('Por favor, selecione um produto.', 'error')
+                    products = Product.query.order_by(Product.name).all()
+                    return self.render('admin/adjust_stock.html', products=products)
+                
+                # Validate quantity
+                try:
+                    quantity_change = int(request.form.get('quantity_change', 0))
+                    if quantity_change == 0:
+                        flash('A quantidade não pode ser zero.', 'error')
+                        products = Product.query.order_by(Product.name).all()
+                        return self.render('admin/adjust_stock.html', products=products)
+                except ValueError:
+                    flash('A quantidade deve ser um número inteiro.', 'error')
+                    products = Product.query.order_by(Product.name).all()
+                    return self.render('admin/adjust_stock.html', products=products)
+                
+                # Get and validate reason
+                reason = request.form.get('reason', '').strip() or 'Ajuste manual'
+                
+                # Find the product and adjust stock
+                product = Product.query.get(product_id)
+                if not product:
+                    flash('Produto não encontrado!', 'error')
+                    products = Product.query.order_by(Product.name).all()
+                    return self.render('admin/adjust_stock.html', products=products)
+                
+                old_quantity = product.stock_quantity
+                
+                # Prevent negative stock
+                if old_quantity + quantity_change < 0:
+                    flash(f'Erro: Quantidade insuficiente. O produto {product.name} possui apenas {old_quantity} unidades em estoque.', 'error')
+                else:
+                    # Create the movement record with full details
+                    movement_type = 'increase' if quantity_change > 0 else 'decrease'
+                    
+                    # Use the product's method to update stock and create movement
+                    movement = product.update_stock(quantity_change, reason)
+                    if movement:
+                        movement.created_by = 'Admin'
+                        movement.movement_type = movement_type  # Ensure correct movement type
+                        db.session.add(movement)
+                        db.session.commit()
+                        
+                        # Handle stock alerts creation/resolution
+                        self._manage_stock_alerts(product)
+                        
+                        # Provide detailed success message
+                        if quantity_change > 0:
+                            flash(f'Estoque do produto {product.name} aumentado em {quantity_change} unidades. Novo estoque: {product.stock_quantity}', 'success')
+                        else:
+                            flash(f'Estoque do produto {product.name} reduzido em {abs(quantity_change)} unidades. Novo estoque: {product.stock_quantity}', 'success')
+                    else:
+                        flash('Erro ao criar registro de movimentação.', 'error')
+            except Exception as e:
+                import traceback
+                error_details = traceback.format_exc()
+                logging.error(f"Erro ao ajustar estoque: {str(e)}\n{error_details}")
+                db.session.rollback()
+                flash(f'Erro ao processar o ajuste de estoque: {str(e)}', 'error')
+        
+        # Get products sorted by name for better UX
+        products = Product.query.order_by(Product.name).all()
         return self.render('admin/adjust_stock.html', products=products)
+    
+    def _manage_stock_alerts(self, product):
+        """
+        Create or resolve stock alerts based on product stock levels
+        
+        Args:
+            product: The Product instance to check
+        """
+        try:
+            # Check if we need to create a stock alert
+            if product.stock_quantity <= product.min_stock_level:
+                # Check if alert already exists
+                existing_alert = StockAlert.query.filter_by(
+                    product_id=product.id, 
+                    is_resolved=False
+                ).first()
+                
+                if not existing_alert:
+                    # Create new alert
+                    alert = StockAlert(
+                        product_id=product.id,
+                        alert_type='low_stock' if product.stock_quantity > 0 else 'out_of_stock',
+                        message=f'Estoque abaixo do nível mínimo ({product.min_stock_level})',
+                        is_resolved=False
+                    )
+                    db.session.add(alert)
+            else:
+                # Resolve any existing alerts for this product
+                StockAlert.query.filter_by(
+                    product_id=product.id, 
+                    is_resolved=False
+                ).update({
+                    'is_resolved': True,
+                    'resolved_at': datetime.now(),
+                    'resolution_note': 'Estoque normalizado'
+                })
+            
+            db.session.commit()
+        except Exception as e:
+            logging.error(f"Erro ao gerenciar alertas: {str(e)}")
+            # We don't raise the exception here to avoid breaking the main flow
+            # if alert management fails
 
 class ProductAdminView(ModelView):
     """Enhanced admin view for Product model with inventory features"""
@@ -269,6 +378,7 @@ admin = Admin(
     app, 
     name='Administração - Visage',
     template_mode='bootstrap4',
+    base_template='admin/layout.html',
     index_view=SecureAdminIndexView(name='Dashboard')
 )
 
