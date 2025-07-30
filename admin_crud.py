@@ -1,10 +1,24 @@
-from flask import render_template_string, request, redirect, url_for, flash, Blueprint
+from flask import render_template_string, request, redirect, url_for, flash, Blueprint, send_from_directory
+from werkzeug.utils import secure_filename
 from app import app, db
 from models import Product, Order, StockMovement, Supplier, OrderItem
 from datetime import datetime
+import os
+import uuid
 
 # Criar blueprint para o admin
 admin_bp = Blueprint('admin_crud', __name__, url_prefix='/admin')
+
+# Configuração para upload de imagens
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+# Criar diretório de upload se não existir
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @admin_bp.route('/')
 def index():
@@ -221,6 +235,18 @@ def products_list():
 def products_new():
     if request.method == 'POST':
         try:
+            image_url = request.form.get('image_url')
+            
+            # Verificar se há upload de imagem
+            if 'image_file' in request.files:
+                file = request.files['image_file']
+                if file and file.filename != '' and allowed_file(file.filename):
+                    # Gerar nome único para o arquivo
+                    filename = str(uuid.uuid4()) + '_' + secure_filename(file.filename)
+                    file_path = os.path.join(UPLOAD_FOLDER, filename)
+                    file.save(file_path)
+                    image_url = f'/static/uploads/{filename}'
+            
             # Criar novo produto
             product = Product(
                 name=request.form.get('name'),
@@ -232,7 +258,7 @@ def products_new():
                 max_stock_level=int(request.form.get('max_stock_level', 100)),
                 supplier=request.form.get('supplier'),
                 sku=request.form.get('sku'),
-                image_url=request.form.get('image_url'),
+                image_url=image_url,
                 category=request.form.get('category'),
                 in_stock=request.form.get('in_stock') == 'on'
             )
@@ -291,7 +317,7 @@ def products_new():
                 <div class="col-lg-8">
                     <div class="card">
                         <div class="card-body">
-                            <form method="POST">
+                            <form method="POST" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -363,19 +389,32 @@ def products_new():
                                     </div>
                                 </div>
                                 
+                                <div class="mb-3">
+                                    <label class="form-label">Fornecedor</label>
+                                    <input type="text" class="form-control" name="supplier">
+                                </div>
+                                
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label">Fornecedor</label>
-                                            <input type="text" class="form-control" name="supplier">
+                                            <label class="form-label">Imagem do Produto</label>
+                                            <input type="file" class="form-control" name="image_file" accept="image/*" onchange="previewImage(this)">
+                                            <small class="form-text text-muted">Selecione uma imagem (PNG, JPG, JPEG, GIF, WEBP)</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label">URL da Imagem</label>
+                                            <label class="form-label">OU URL da Imagem</label>
                                             <input type="url" class="form-control" name="image_url" placeholder="https://exemplo.com/imagem.jpg">
+                                            <small class="form-text text-muted">Deixe em branco se usar upload</small>
                                         </div>
                                     </div>
+                                </div>
+                                
+                                <div class="mb-3" id="imagePreview" style="display: none;">
+                                    <label class="form-label">Preview da Imagem:</label>
+                                    <br>
+                                    <img id="preview" src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
                                 </div>
                                 
                                 <div class="mb-3">
@@ -401,6 +440,18 @@ def products_new():
         </div>
         
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function previewImage(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('preview').src = e.target.result;
+                        document.getElementById('imagePreview').style.display = 'block';
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+        </script>
     </body>
     </html>
     '''
@@ -412,6 +463,25 @@ def products_edit(id):
     
     if request.method == 'POST':
         try:
+            image_url = request.form.get('image_url')
+            
+            # Verificar se há upload de nova imagem
+            if 'image_file' in request.files:
+                file = request.files['image_file']
+                if file and file.filename != '' and allowed_file(file.filename):
+                    # Gerar nome único para o arquivo
+                    filename = str(uuid.uuid4()) + '_' + secure_filename(file.filename)
+                    file_path = os.path.join(UPLOAD_FOLDER, filename)
+                    file.save(file_path)
+                    image_url = f'/static/uploads/{filename}'
+                    
+                    # Remover imagem antiga se for local
+                    if product.image_url and '/static/uploads/' in product.image_url:
+                        old_file = product.image_url.replace('/static/uploads/', '')
+                        old_path = os.path.join(UPLOAD_FOLDER, old_file)
+                        if os.path.exists(old_path):
+                            os.remove(old_path)
+            
             # Atualizar produto
             product.name = request.form.get('name')
             product.description = request.form.get('description')
@@ -422,7 +492,7 @@ def products_edit(id):
             product.max_stock_level = int(request.form.get('max_stock_level', 100))
             product.supplier = request.form.get('supplier')
             product.sku = request.form.get('sku')
-            product.image_url = request.form.get('image_url')
+            product.image_url = image_url or product.image_url  # Manter imagem atual se não houver nova
             product.category = request.form.get('category')
             product.in_stock = request.form.get('in_stock') == 'on'
             product.updated_at = datetime.utcnow()
@@ -480,7 +550,7 @@ def products_edit(id):
                 <div class="col-lg-8">
                     <div class="card">
                         <div class="card-body">
-                            <form method="POST">
+                            <form method="POST" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -552,19 +622,31 @@ def products_edit(id):
                                     </div>
                                 </div>
                                 
+                                <div class="mb-3">
+                                    <label class="form-label">Fornecedor</label>
+                                    <input type="text" class="form-control" name="supplier" value="{{ product.supplier or '' }}">
+                                </div>
+                                
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label">Fornecedor</label>
-                                            <input type="text" class="form-control" name="supplier" value="{{ product.supplier or '' }}">
+                                            <label class="form-label">Nova Imagem</label>
+                                            <input type="file" class="form-control" name="image_file" accept="image/*" onchange="previewImage(this)">
+                                            <small class="form-text text-muted">Deixe em branco para manter imagem atual</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label">URL da Imagem</label>
+                                            <label class="form-label">OU URL da Imagem</label>
                                             <input type="url" class="form-control" name="image_url" value="{{ product.image_url or '' }}">
                                         </div>
                                     </div>
+                                </div>
+                                
+                                <div class="mb-3" id="imagePreview" style="display: none;">
+                                    <label class="form-label">Preview da Nova Imagem:</label>
+                                    <br>
+                                    <img id="preview" src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
                                 </div>
                                 
                                 <div class="mb-3">
@@ -609,6 +691,18 @@ def products_edit(id):
         </div>
         
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function previewImage(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('preview').src = e.target.result;
+                        document.getElementById('imagePreview').style.display = 'block';
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+        </script>
     </body>
     </html>
     '''
@@ -712,6 +806,230 @@ def orders_list():
     '''
     return render_template_string(html, orders=orders)
 
+@admin_bp.route('/orders/view/<int:id>')
+def orders_view(id):
+    order = Order.query.get_or_404(id)
+    order_items = OrderItem.query.filter_by(order_id=id).all()
+    
+    html = '''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Ver Pedido #{{ order.id }} - Admin Visage</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="/admin/">🏪 Visage Admin</a>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/admin/">Dashboard</a>
+                    <a class="nav-link" href="/admin/products">Produtos</a>
+                    <a class="nav-link active" href="/admin/orders">Pedidos</a>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="container mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-eye"></i> Pedido #{{ order.id }}</h1>
+                <a href="/admin/orders" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Informações do Cliente</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Nome:</strong> {{ order.customer_name }}</p>
+                            <p><strong>Telefone:</strong> {{ order.customer_phone or 'Não informado' }}</p>
+                            <p><strong>Email:</strong> {{ order.customer_email or 'Não informado' }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Informações do Pedido</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Status:</strong> 
+                                <span class="badge bg-{% if order.status == 'completed' %}success{% elif order.status == 'pending' %}warning{% else %}danger{% endif %}">
+                                    {{ order.status.title() }}
+                                </span>
+                            </p>
+                            <p><strong>Total:</strong> R$ {{ "%.2f"|format(order.total_amount) }}</p>
+                            <p><strong>Data:</strong> {{ order.created_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                            <p><strong>WhatsApp:</strong> 
+                                {% if order.whatsapp_sent %}
+                                    <i class="fas fa-check-circle text-success"></i> Enviado
+                                {% else %}
+                                    <i class="fas fa-times-circle text-danger"></i> Não enviado
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>Itens do Pedido</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th>Preço Unitário</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order_items %}
+                                <tr>
+                                    <td>{{ item.product_name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>R$ {{ "%.2f"|format(item.unit_price) }}</td>
+                                    <td>R$ {{ "%.2f"|format(item.quantity * item.unit_price) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-dark">
+                                    <th colspan="3">Total:</th>
+                                    <th>R$ {{ "%.2f"|format(order.total_amount) }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    '''
+    return render_template_string(html, order=order, order_items=order_items)
+
+@admin_bp.route('/orders/edit/<int:id>', methods=['GET', 'POST'])
+def orders_edit(id):
+    order = Order.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        try:
+            order.status = request.form.get('status')
+            order.customer_name = request.form.get('customer_name')
+            order.customer_phone = request.form.get('customer_phone')
+            order.customer_email = request.form.get('customer_email')
+            
+            db.session.commit()
+            flash('Pedido atualizado com sucesso!', 'success')
+            return redirect(url_for('admin_crud.orders_list'))
+        except Exception as e:
+            flash(f'Erro ao atualizar pedido: {str(e)}', 'error')
+            db.session.rollback()
+    
+    html = '''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Editar Pedido #{{ order.id }} - Admin Visage</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="/admin/">🏪 Visage Admin</a>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/admin/">Dashboard</a>
+                    <a class="nav-link" href="/admin/products">Produtos</a>
+                    <a class="nav-link active" href="/admin/orders">Pedidos</a>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="container mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-edit"></i> Editar Pedido #{{ order.id }}</h1>
+                <a href="/admin/orders" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nome do Cliente</label>
+                                    <input type="text" class="form-control" name="customer_name" value="{{ order.customer_name }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Status do Pedido</label>
+                                    <select class="form-control" name="status">
+                                        <option value="pending" {{ 'selected' if order.status == 'pending' }}>Pendente</option>
+                                        <option value="processing" {{ 'selected' if order.status == 'processing' }}>Processando</option>
+                                        <option value="completed" {{ 'selected' if order.status == 'completed' }}>Concluído</option>
+                                        <option value="cancelled" {{ 'selected' if order.status == 'cancelled' }}>Cancelado</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Telefone</label>
+                                    <input type="text" class="form-control" name="customer_phone" value="{{ order.customer_phone or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="customer_email" value="{{ order.customer_email or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="/admin/orders" class="btn btn-secondary me-md-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
+    '''
+    return render_template_string(html, order=order)
+
 @admin_bp.route('/suppliers')
 def suppliers_list():
     suppliers = Supplier.query.all()
@@ -792,6 +1110,269 @@ def suppliers_list():
     </html>
     '''
     return render_template_string(html, suppliers=suppliers)
+
+@admin_bp.route('/suppliers/new', methods=['GET', 'POST'])
+def suppliers_new():
+    if request.method == 'POST':
+        try:
+            supplier = Supplier(
+                name=request.form.get('name'),
+                contact_person=request.form.get('contact_person'),
+                email=request.form.get('email'),
+                phone=request.form.get('phone'),
+                address=request.form.get('address'),
+                is_active=request.form.get('is_active') == 'on'
+            )
+            
+            db.session.add(supplier)
+            db.session.commit()
+            
+            flash('Fornecedor criado com sucesso!', 'success')
+            return redirect(url_for('admin_crud.suppliers_list'))
+        except Exception as e:
+            flash(f'Erro ao criar fornecedor: {str(e)}', 'error')
+            db.session.rollback()
+    
+    html = '''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Novo Fornecedor - Admin Visage</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="/admin/">🏪 Visage Admin</a>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/admin/">Dashboard</a>
+                    <a class="nav-link" href="/admin/products">Produtos</a>
+                    <a class="nav-link" href="/admin/orders">Pedidos</a>
+                    <a class="nav-link active" href="/admin/suppliers">Fornecedores</a>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="container mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-plus"></i> Novo Fornecedor</h1>
+                <a href="/admin/suppliers" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nome do Fornecedor *</label>
+                                    <input type="text" class="form-control" name="name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Pessoa de Contato</label>
+                                    <input type="text" class="form-control" name="contact_person">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Telefone</label>
+                                    <input type="text" class="form-control" name="phone">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Endereço</label>
+                            <textarea class="form-control" name="address" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_active" id="is_active" checked>
+                                <label class="form-check-label" for="is_active">
+                                    Fornecedor ativo
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="/admin/suppliers" class="btn btn-secondary me-md-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Salvar Fornecedor
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
+    '''
+    return render_template_string(html)
+
+@admin_bp.route('/suppliers/edit/<int:id>', methods=['GET', 'POST'])
+def suppliers_edit(id):
+    supplier = Supplier.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        try:
+            supplier.name = request.form.get('name')
+            supplier.contact_person = request.form.get('contact_person')
+            supplier.email = request.form.get('email')
+            supplier.phone = request.form.get('phone')
+            supplier.address = request.form.get('address')
+            supplier.is_active = request.form.get('is_active') == 'on'
+            
+            db.session.commit()
+            flash('Fornecedor atualizado com sucesso!', 'success')
+            return redirect(url_for('admin_crud.suppliers_list'))
+        except Exception as e:
+            flash(f'Erro ao atualizar fornecedor: {str(e)}', 'error')
+            db.session.rollback()
+    
+    html = '''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Editar Fornecedor - Admin Visage</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="/admin/">🏪 Visage Admin</a>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/admin/">Dashboard</a>
+                    <a class="nav-link" href="/admin/products">Produtos</a>
+                    <a class="nav-link" href="/admin/orders">Pedidos</a>
+                    <a class="nav-link active" href="/admin/suppliers">Fornecedores</a>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="container mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-edit"></i> Editar: {{ supplier.name }}</h1>
+                <a href="/admin/suppliers" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nome do Fornecedor *</label>
+                                    <input type="text" class="form-control" name="name" value="{{ supplier.name }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Pessoa de Contato</label>
+                                    <input type="text" class="form-control" name="contact_person" value="{{ supplier.contact_person or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" value="{{ supplier.email or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Telefone</label>
+                                    <input type="text" class="form-control" name="phone" value="{{ supplier.phone or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Endereço</label>
+                            <textarea class="form-control" name="address" rows="3">{{ supplier.address or '' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_active" id="is_active" {{ 'checked' if supplier.is_active }}>
+                                <label class="form-check-label" for="is_active">
+                                    Fornecedor ativo
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="/admin/suppliers" class="btn btn-secondary me-md-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
+    '''
+    return render_template_string(html, supplier=supplier)
+
+@admin_bp.route('/suppliers/delete/<int:id>')
+def suppliers_delete(id):
+    supplier = Supplier.query.get_or_404(id)
+    try:
+        db.session.delete(supplier)
+        db.session.commit()
+        flash('Fornecedor excluído com sucesso!', 'success')
+    except Exception as e:
+        flash(f'Erro ao excluir fornecedor: {str(e)}', 'error')
+        db.session.rollback()
+    
+    return redirect(url_for('admin_crud.suppliers_list'))
 
 # Registrar o blueprint no app
 app.register_blueprint(admin_bp)
