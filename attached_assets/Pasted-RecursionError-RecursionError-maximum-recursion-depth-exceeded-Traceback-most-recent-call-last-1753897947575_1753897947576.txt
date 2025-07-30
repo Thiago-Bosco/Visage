@@ -1,0 +1,129 @@
+RecursionError
+RecursionError: maximum recursion depth exceeded
+
+Traceback (most recent call last)
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1536, in __call__
+return self.wsgi_app(environ, start_response)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\middleware\proxy_fix.py", line 183, in __call__
+return self.app(environ, start_response)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1514, in wsgi_app
+response = self.handle_exception(e)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+response = self.full_dispatch_request()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+rv = self.handle_user_exception(e)
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+rv = self.dispatch_request()
+     ^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask_admin\base.py", line 69, in inner
+return self._run_view(f, *args, **kwargs)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask_admin\base.py", line 369, in _run_view
+return fn(self, *args, **kwargs)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\OneDrive\Área de Trabalho\Nova pasta (2)\admin.py", line 40, in index
+return self.render('admin/index.html',
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask_admin\base.py", line 308, in render
+        kwargs['config'] = current_app.config
+ 
+        # Contribute extra arguments
+        kwargs.update(self._template_args)
+ 
+        return render_template(template, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+    def _prettify_class_name(self, name):
+        """
+            Split words in PascalCase string into separate words.
+ 
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+return _render(app, template, context)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 131, in _render
+rv = template.render(context)
+     ^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1295, in render
+self.environment.handle_exception()
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+raise rewrite_traceback_stack(source=source)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\OneDrive\Área de Trabalho\Nova pasta (2)\templates\admin\index.html", line 1, in top-level template code
+{% extends 'admin/master.html' %}
+File "C:\Users\thiag\OneDrive\Área de Trabalho\Nova pasta (2)\templates\admin\master.html", line 1, in top-level template code
+{% extends 'admin/base.html' %}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask_admin\templates\bootstrap4\admin\base.html", line 1, in top-level template code
+{% import 'admin/layout.html' as layout with context -%}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1405, in make_module
+return TemplateModule(self, ctx)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1537, in __init__
+body_stream = list(template.root_render_func(context))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\OneDrive\Área de Trabalho\Nova pasta (2)\templates\admin\layout.html", line 1, in top-level template code
+{% extends 'admin/base.html' %}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask_admin\templates\bootstrap4\admin\base.html", line 1, in top-level template code
+{% import 'admin/layout.html' as layout with context -%}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1405, in make_module
+return TemplateModule(self, ctx)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1537, in __init__
+body_stream = list(template.root_render_func(context))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\OneDrive\Área de Trabalho\Nova pasta (2)\templates\admin\layout.html", line 1, in top-level template code
+{% extends 'admin/base.html' %}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask_admin\templates\bootstrap4\admin\base.html", line 1, in top-level template code
+{% import 'admin/layout.html' as layout with context -%}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1405, in make_module
+return TemplateModule(self, ctx)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1537, in __init__
+body_stream = list(template.root_render_func(context))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\OneDrive\Área de Trabalho\Nova pasta (2)\templates\admin\layout.html", line 1, in top-level template code
+{% extends 'admin/base.html' %}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask_admin\templates\bootstrap4\admin\base.html", line 1, in top-level template code
+{% import 'admin/layout.html' as layout with context -%}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1405, in make_module
+return TemplateModule(self, ctx)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1537, in __init__
+body_stream = list(template.root_render_func(context))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\OneDrive\Área de Trabalho\Nova pasta (2)\templates\admin\layout.html", line 1, in top-level template code
+{% extends 'admin/base.html' %}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask_admin\templates\bootstrap4\admin\base.html", line 1, in top-level template code
+{% import 'admin/layout.html' as layout with context -%}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1405, in make_module
+return TemplateModule(self, ctx)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1537, in __init__
+body_stream = list(template.root_render_func(context))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\OneDrive\Área de Trabalho\Nova pasta (2)\templates\admin\layout.html", line 1, in top-level template code
+{% extends 'admin/base.html' %}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask_admin\templates\bootstrap4\admin\base.html", line 1, in top-level template code
+{% import 'admin/layout.html' as layout with context -%}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1405, in make_module
+return TemplateModule(self, ctx)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1537, in __init__
+body_stream = list(template.root_render_func(context))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\OneDrive\Área de Trabalho\Nova pasta (2)\templates\admin\layout.html", line 1, in top-level template code
+{% extends 'admin/base.html' %}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask_admin\templates\bootstrap4\admin\base.html", line 1, in top-level template code
+{% import 'admin/layout.html' as layout with context -%}
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1405, in make_module
+return TemplateModule(self, ctx)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\thiag\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1537, in __init__
