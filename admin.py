@@ -188,167 +188,84 @@ class InventoryManagementView(BaseView):
             # if alert management fails
 
 class ProductAdminView(ModelView):
-    """Enhanced admin view for Product model with inventory features"""
+    """Admin básico e funcional para produtos"""
     
-    # List view configuration
-    column_list = ['image_url', 'name', 'category', 'price', 'cost_price', 'stock_quantity', 'min_stock_level', 'profit_margin', 'supplier', 'sku', 'in_stock']
-    column_searchable_list = ['name', 'description', 'category', 'supplier', 'sku']
-    column_filters = ['category', 'in_stock', 'supplier', 'created_at']
-    column_sortable_list = ['id', 'name', 'category', 'price', 'cost_price', 'stock_quantity', 'min_stock_level', 'created_at']
-    column_default_sort = ('created_at', True)
+    # Configuração básica para funcionamento
+    can_create = True
+    can_edit = True 
+    can_delete = True
     
-    # Form configuration
-    form_columns = ['name', 'description', 'price', 'cost_price', 'stock_quantity', 'min_stock_level', 'max_stock_level', 
-                   'supplier', 'sku', 'image_url', 'category', 'in_stock']
+    # Campos na lista
+    column_list = ('name', 'category', 'price', 'stock_quantity', 'in_stock')
     
-    # Removido form_extra_fields que causava erro
-    
-    form_widget_args = {
-        'description': {'rows': 5},
-        'price': {'step': '0.01'},
-        'cost_price': {'step': '0.01'},
-        'stock_quantity': {'min': 0},
-        'min_stock_level': {'min': 0},
-        'max_stock_level': {'min': 1}
-    }
-    
-    # Custom formatting
+    # Formatação das colunas  
     column_formatters = {
-        'price': lambda v, c, m, p: f'R$ {m.price:.2f}',
-        'cost_price': lambda v, c, m, p: f'R$ {m.cost_price:.2f}',
-        'profit_margin': lambda v, c, m, p: f'{m.profit_margin:.1f}%',
-        'stock_quantity': lambda v, c, m, p: f'<span class="badge bg-{"danger" if m.stock_quantity <= m.min_stock_level else "warning" if m.stock_quantity <= m.min_stock_level * 2 else "success"}">{m.stock_quantity}</span>',
-        'in_stock': lambda v, c, m, p: '✅ Sim' if m.in_stock else '❌ Não',
-        'name': lambda v, c, m, p: f'<strong>{m.name}</strong>' if m.in_stock else f'<span class="text-muted">{m.name}</span>',
-        'image_url': lambda v, c, m, p: f'<img src="{m.image_url}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" alt="{m.name}">' if m.image_url else 'Sem imagem'
+        'price': lambda v, c, m, p: f'R$ {m.price:.2f}' if m.price else 'R$ 0,00',
+        'in_stock': lambda v, c, m, p: '✅' if m.in_stock else '❌'
     }
     
+    # Labels em português
     column_labels = {
-        'id': 'ID',
         'name': 'Nome',
         'category': 'Categoria',
-        'price': 'Preço de Venda',
-        'cost_price': 'Preço de Custo',
-        'stock_quantity': 'Estoque Atual',
-        'min_stock_level': 'Estoque Mínimo',
-        'max_stock_level': 'Estoque Máximo',
-        'profit_margin': 'Margem (%)',
-        'supplier': 'Fornecedor',
-        'sku': 'SKU',
-        'in_stock': 'Disponível',
-        'created_at': 'Criado em',
-        'updated_at': 'Atualizado em',
-        'description': 'Descrição',
-        'image_url': 'Imagem'
+        'price': 'Preço', 
+        'stock_quantity': 'Estoque',
+        'in_stock': 'Disponível'
     }
     
-    def on_model_change(self, form, model, is_created):
-        """Auto-update in_stock based on quantity"""
-        model.in_stock = model.stock_quantity > 0
-    
-    # Enable features
-    can_create = True
-    can_edit = True
-    can_delete = True
-    can_export = True
-    page_size = 20
+    # Campos do formulário sem problemas
+    form_excluded_columns = ['created_at', 'updated_at']
 
 class StockMovementAdminView(ModelView):
-    """Admin view for Stock Movement tracking"""
+    """Admin básico para movimentações"""
     
-    column_list = ['created_at', 'product', 'movement_type', 'quantity', 'old_quantity', 'new_quantity', 'reason', 'created_by']
-    column_searchable_list = ['reason', 'created_by']
-    column_filters = ['movement_type', 'created_at', 'created_by']
-    column_sortable_list = ['created_at', 'movement_type', 'quantity']
-    column_default_sort = ('created_at', True)
-    
-    column_formatters = {
-        'movement_type': lambda v, c, m, p: f'<span class="badge bg-{"success" if m.movement_type == "increase" else "danger"}">{m.movement_type.title()}</span>',
-        'quantity': lambda v, c, m, p: f'+{m.quantity}' if m.movement_type == 'increase' else f'-{m.quantity}',
-        'created_at': lambda v, c, m, p: m.created_at.strftime('%d/%m/%Y %H:%M')
-    }
-    
-    column_labels = {
-        'created_at': 'Data/Hora',
-        'product': 'Produto',
-        'movement_type': 'Tipo',
-        'quantity': 'Quantidade',
-        'old_quantity': 'Estoque Anterior',
-        'new_quantity': 'Estoque Atual',
-        'reason': 'Motivo',
-        'created_by': 'Criado por'
-    }
-    
-    # Read-only view
     can_create = False
     can_edit = False
     can_delete = False
-    can_export = True
-    page_size = 50
+    
+    column_list = ('created_at', 'product', 'movement_type', 'quantity')
+    column_default_sort = ('created_at', True)
+    
+    column_labels = {
+        'created_at': 'Data',
+        'product': 'Produto',
+        'movement_type': 'Tipo', 
+        'quantity': 'Quantidade'
+    }
 
 class SupplierAdminView(ModelView):
-    """Admin view for Supplier management"""
+    """Admin básico para fornecedores"""
     
-    column_list = ['name', 'contact_person', 'email', 'phone', 'is_active', 'created_at']
-    column_searchable_list = ['name', 'contact_person', 'email', 'phone']
-    column_filters = ['is_active', 'created_at']
-    column_sortable_list = ['name', 'contact_person', 'created_at']
-    
-    column_formatters = {
-        'is_active': lambda v, c, m, p: '✅ Ativo' if m.is_active else '❌ Inativo',
-        'created_at': lambda v, c, m, p: m.created_at.strftime('%d/%m/%Y')
-    }
+    column_list = ('name', 'contact_person', 'phone', 'is_active')
     
     column_labels = {
         'name': 'Nome',
-        'contact_person': 'Pessoa de Contato',
-        'email': 'E-mail',
+        'contact_person': 'Contato', 
         'phone': 'Telefone',
-        'address': 'Endereço',
-        'is_active': 'Status',
-        'created_at': 'Criado em'
+        'is_active': 'Ativo'
     }
-    
-    form_columns = ['name', 'contact_person', 'email', 'phone', 'address', 'is_active']
-    
-    can_create = True
-    can_edit = True
-    can_delete = True
-    can_export = True
 
 class OrderAdminView(ModelView):
-    """Admin view for Order model"""
+    """Admin básico para pedidos"""
     
-    column_list = ['id', 'customer_name', 'customer_phone', 'total_amount', 'status', 'whatsapp_sent', 'created_at']
-    column_searchable_list = ['customer_name', 'customer_phone']
-    column_filters = ['status', 'whatsapp_sent', 'created_at']
-    column_sortable_list = ['id', 'customer_name', 'total_amount', 'created_at']
+    can_create = False
+    can_edit = True
+    can_delete = False
+    
+    column_list = ('id', 'customer_name', 'total_amount', 'status', 'created_at')
     column_default_sort = ('created_at', True)
     
     column_formatters = {
-        'total_amount': lambda v, c, m, p: f'R$ {m.total_amount:.2f}',
-        'status': lambda v, c, m, p: f'<span class="badge bg-{"success" if m.status == "completed" else "warning" if m.status == "pending" else "danger"}">{m.status.title()}</span>',
-        'whatsapp_sent': lambda v, c, m, p: '✅ Sim' if m.whatsapp_sent else '❌ Não',
-        'created_at': lambda v, c, m, p: m.created_at.strftime('%d/%m/%Y %H:%M')
+        'total_amount': lambda v, c, m, p: f'R$ {m.total_amount:.2f}' if m.total_amount else 'R$ 0,00'
     }
     
     column_labels = {
         'id': 'ID',
         'customer_name': 'Cliente',
-        'customer_phone': 'Telefone',
-        'total_amount': 'Total',
+        'total_amount': 'Total', 
         'status': 'Status',
-        'whatsapp_sent': 'WhatsApp Enviado',
-        'created_at': 'Data do Pedido'
+        'created_at': 'Data'
     }
-    
-    form_columns = ['customer_name', 'customer_phone', 'status']
-    
-    can_create = False
-    can_edit = True
-    can_delete = True
-    can_export = True
-    page_size = 20
 
 # Initialize Flask-Admin
 admin = Admin(

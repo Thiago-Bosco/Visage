@@ -36,6 +36,13 @@ with app.app_context():
     
     db.create_all()
     
+    # Usar admin simples em vez do complexo
+    try:
+        import admin_simple  # noqa: F401
+        print("Admin simples carregado com sucesso!")
+    except Exception as e:
+        print(f"Erro ao carregar admin simples: {e}")
+    
     # Create some initial products if none exist
     from models import Product
     if Product.query.count() == 0:
