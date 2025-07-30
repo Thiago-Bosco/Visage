@@ -1,57 +1,111 @@
-from flask import Flask, render_template_string, request, redirect, url_for, flash
+from flask import render_template_string, request, redirect, url_for, flash, jsonify
 from flask_admin import Admin, BaseView, expose
-from flask_admin.contrib.sqla import ModelView
 from app import app, db
-from models import Product, Order, StockMovement, Supplier
+from models import Product, Order, StockMovement, Supplier, OrderItem
+from datetime import datetime
 
-class SimpleAdminView(BaseView):
+class AdminCRUDView(BaseView):
     @expose('/')
     def index(self):
-        # Dashboard simples
+        # Dashboard completo
         total_products = Product.query.count()
         total_orders = Order.query.count()
         low_stock_products = Product.query.filter(Product.stock_quantity <= 5).count()
+        recent_orders = Order.query.order_by(Order.created_at.desc()).limit(5).all()
         
         html = '''
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Admin - Visage</title>
+            <title>Admin CRUD - Visage</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         </head>
         <body>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container">
+                    <a class="navbar-brand" href="/admin/">🏪 Visage Admin</a>
+                    <div class="navbar-nav">
+                        <a class="nav-link" href="/admin/">Dashboard</a>
+                        <a class="nav-link" href="/admin/products">Produtos</a>
+                        <a class="nav-link" href="/admin/orders">Pedidos</a>
+                        <a class="nav-link" href="/admin/suppliers">Fornecedores</a>
+                        <a class="nav-link" href="/">Site</a>
+                    </div>
+                </div>
+            </nav>
+            
             <div class="container mt-4">
-                <h1>Dashboard - Visage Admin</h1>
+                <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+                
                 <div class="row mt-4">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card bg-primary text-white">
-                            <div class="card-body">
-                                <h5>Total de Produtos</h5>
+                            <div class="card-body text-center">
+                                <i class="fas fa-box fa-2x mb-2"></i>
+                                <h5>Produtos</h5>
                                 <h2>{{ total_products }}</h2>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card bg-success text-white">
-                            <div class="card-body">
-                                <h5>Total de Pedidos</h5>
+                            <div class="card-body text-center">
+                                <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                                <h5>Pedidos</h5>
                                 <h2>{{ total_orders }}</h2>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card bg-warning text-white">
-                            <div class="card-body">
+                            <div class="card-body text-center">
+                                <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
                                 <h5>Estoque Baixo</h5>
                                 <h2>{{ low_stock }}</h2>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <i class="fas fa-chart-line fa-2x mb-2"></i>
+                                <h5>Vendas Hoje</h5>
+                                <h2>R$ 0</h2>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-4">
-                    <a href="/admin/products" class="btn btn-primary">Gerenciar Produtos</a>
-                    <a href="/admin/orders" class="btn btn-success">Ver Pedidos</a>
-                    <a href="/" class="btn btn-secondary">Voltar ao Site</a>
+                
+                <div class="row mt-5">
+                    <div class="col-md-8">
+                        <h3>Ações Rápidas</h3>
+                        <div class="list-group">
+                            <a href="/admin/products/new" class="list-group-item list-group-item-action">
+                                <i class="fas fa-plus text-primary"></i> Adicionar Novo Produto
+                            </a>
+                            <a href="/admin/products" class="list-group-item list-group-item-action">
+                                <i class="fas fa-edit text-success"></i> Gerenciar Produtos
+                            </a>
+                            <a href="/admin/orders" class="list-group-item list-group-item-action">
+                                <i class="fas fa-list text-info"></i> Ver Todos os Pedidos
+                            </a>
+                            <a href="/admin/suppliers" class="list-group-item list-group-item-action">
+                                <i class="fas fa-truck text-warning"></i> Gerenciar Fornecedores
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h3>Pedidos Recentes</h3>
+                        <div class="list-group">
+                            {% for order in recent_orders %}
+                            <div class="list-group-item">
+                                <strong>#{{ order.id }}</strong> - {{ order.customer_name }}<br>
+                                <small class="text-muted">R$ {{ "%.2f"|format(order.total_amount) }}</small>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </body>
@@ -60,23 +114,721 @@ class SimpleAdminView(BaseView):
         return render_template_string(html, 
                                     total_products=total_products,
                                     total_orders=total_orders, 
-                                    low_stock=low_stock_products)
+                                    low_stock=low_stock_products,
+                                    recent_orders=recent_orders)
 
-# Simples e funcional
-admin = Admin(app, name='Admin Visage', index_view=SimpleAdminView(name='Dashboard'))
+    @expose('/products')
+    def products_list(self):
+        page = request.args.get('page', 1, type=int)
+        per_page = 20
+        products = Product.query.paginate(page=page, per_page=per_page, error_out=False)
+        
+        html = '''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Produtos - Admin Visage</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        </head>
+        <body>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container">
+                    <a class="navbar-brand" href="/admin/">🏪 Visage Admin</a>
+                    <div class="navbar-nav">
+                        <a class="nav-link" href="/admin/">Dashboard</a>
+                        <a class="nav-link active" href="/admin/products">Produtos</a>
+                        <a class="nav-link" href="/admin/orders">Pedidos</a>
+                        <a class="nav-link" href="/admin/suppliers">Fornecedores</a>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="container mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1><i class="fas fa-box"></i> Gerenciar Produtos</h1>
+                    <a href="/admin/products/new" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Novo Produto
+                    </a>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Imagem</th>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Preço</th>
+                                <th>Estoque</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products.items %}
+                            <tr>
+                                <td>
+                                    {% if product.image_url %}
+                                        <img src="{{ product.image_url }}" alt="{{ product.name }}" 
+                                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                    {% else %}
+                                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
+                                             style="width: 50px; height: 50px; border-radius: 8px;">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td><strong>{{ product.name }}</strong></td>
+                                <td><span class="badge bg-info">{{ product.category or 'Sem categoria' }}</span></td>
+                                <td><strong>R$ {{ "%.2f"|format(product.price) }}</strong></td>
+                                <td>
+                                    <span class="badge bg-{% if product.stock_quantity <= 5 %}danger{% elif product.stock_quantity <= 10 %}warning{% else %}success{% endif %}">
+                                        {{ product.stock_quantity }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if product.in_stock %}
+                                        <span class="badge bg-success">Disponível</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Indisponível</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="/admin/products/view/{{ product.id }}" class="btn btn-outline-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="/admin/products/edit/{{ product.id }}" class="btn btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="/admin/products/delete/{{ product.id }}" class="btn btn-outline-danger"
+                                           onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Paginação -->
+                {% if products.pages > 1 %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if products.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.products_list', page=products.prev_num) }}">Anterior</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for page_num in products.iter_pages() %}
+                            {% if page_num %}
+                                {% if page_num != products.page %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('admin.products_list', page=page_num) }}">{{ page_num }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ page_num }}</span>
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if products.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.products_list', page=products.next_num) }}">Próximo</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </body>
+        </html>
+        '''
+        return render_template_string(html, products=products)
 
-# Views básicas que funcionam
-class SimpleProductView(ModelView):
-    column_list = ('name', 'price', 'stock_quantity', 'in_stock')
-    form_excluded_columns = ('created_at', 'updated_at')
+    @expose('/products/new', methods=['GET', 'POST'])
+    def products_new(self):
+        if request.method == 'POST':
+            try:
+                # Criar novo produto
+                product = Product(
+                    name=request.form.get('name'),
+                    description=request.form.get('description'),
+                    price=float(request.form.get('price', 0)),
+                    cost_price=float(request.form.get('cost_price', 0)),
+                    stock_quantity=int(request.form.get('stock_quantity', 0)),
+                    min_stock_level=int(request.form.get('min_stock_level', 5)),
+                    max_stock_level=int(request.form.get('max_stock_level', 100)),
+                    supplier=request.form.get('supplier'),
+                    sku=request.form.get('sku'),
+                    image_url=request.form.get('image_url'),
+                    category=request.form.get('category'),
+                    in_stock=request.form.get('in_stock') == 'on'
+                )
+                
+                db.session.add(product)
+                db.session.commit()
+                
+                flash('Produto criado com sucesso!', 'success')
+                return redirect(url_for('admin.products_list'))
+                
+            except Exception as e:
+                flash(f'Erro ao criar produto: {str(e)}', 'error')
+                db.session.rollback()
+        
+        html = '''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Novo Produto - Admin Visage</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        </head>
+        <body>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container">
+                    <a class="navbar-brand" href="/admin/">🏪 Visage Admin</a>
+                    <div class="navbar-nav">
+                        <a class="nav-link" href="/admin/">Dashboard</a>
+                        <a class="nav-link active" href="/admin/products">Produtos</a>
+                        <a class="nav-link" href="/admin/orders">Pedidos</a>
+                        <a class="nav-link" href="/admin/suppliers">Fornecedores</a>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="container mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1><i class="fas fa-plus"></i> Novo Produto</h1>
+                    <a href="/admin/products" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="POST">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Nome do Produto *</label>
+                                                <input type="text" class="form-control" name="name" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Categoria</label>
+                                                <select class="form-control" name="category">
+                                                    <option value="">Selecione uma categoria</option>
+                                                    <option value="Pomadas">Pomadas</option>
+                                                    <option value="Óleos">Óleos</option>
+                                                    <option value="Shampoos">Shampoos</option>
+                                                    <option value="Ceras">Ceras</option>
+                                                    <option value="Pós-Barba">Pós-Barba</option>
+                                                    <option value="Kits">Kits</option>
+                                                    <option value="Outros">Outros</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Descrição</label>
+                                        <textarea class="form-control" name="description" rows="3"></textarea>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Preço de Venda (R$) *</label>
+                                                <input type="number" class="form-control" name="price" step="0.01" min="0" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Preço de Custo (R$)</label>
+                                                <input type="number" class="form-control" name="cost_price" step="0.01" min="0" value="0">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">SKU</label>
+                                                <input type="text" class="form-control" name="sku">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Estoque Atual</label>
+                                                <input type="number" class="form-control" name="stock_quantity" min="0" value="0">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Estoque Mínimo</label>
+                                                <input type="number" class="form-control" name="min_stock_level" min="0" value="5">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Estoque Máximo</label>
+                                                <input type="number" class="form-control" name="max_stock_level" min="1" value="100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Fornecedor</label>
+                                                <input type="text" class="form-control" name="supplier">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">URL da Imagem</label>
+                                                <input type="url" class="form-control" name="image_url" placeholder="https://exemplo.com/imagem.jpg">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="in_stock" id="in_stock" checked>
+                                            <label class="form-check-label" for="in_stock">
+                                                Produto disponível para venda
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <a href="/admin/products" class="btn btn-secondary me-md-2">Cancelar</a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> Salvar Produto
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        </body>
+        </html>
+        '''
+        return render_template_string(html)
 
-class SimpleOrderView(ModelView):
-    column_list = ('id', 'customer_name', 'total_amount', 'status', 'created_at')
-    can_create = False
-    can_delete = False
+    @expose('/products/edit/<int:id>', methods=['GET', 'POST'])
+    def products_edit(self, id):
+        product = Product.query.get_or_404(id)
+        
+        if request.method == 'POST':
+            try:
+                # Atualizar produto
+                product.name = request.form.get('name')
+                product.description = request.form.get('description')
+                product.price = float(request.form.get('price', 0))
+                product.cost_price = float(request.form.get('cost_price', 0))
+                product.stock_quantity = int(request.form.get('stock_quantity', 0))
+                product.min_stock_level = int(request.form.get('min_stock_level', 5))
+                product.max_stock_level = int(request.form.get('max_stock_level', 100))
+                product.supplier = request.form.get('supplier')
+                product.sku = request.form.get('sku')
+                product.image_url = request.form.get('image_url')
+                product.category = request.form.get('category')
+                product.in_stock = request.form.get('in_stock') == 'on'
+                product.updated_at = datetime.utcnow()
+                
+                db.session.commit()
+                
+                flash('Produto atualizado com sucesso!', 'success')
+                return redirect(url_for('admin.products_list'))
+                
+            except Exception as e:
+                flash(f'Erro ao atualizar produto: {str(e)}', 'error')
+                db.session.rollback()
+        
+        html = '''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Editar Produto - Admin Visage</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        </head>
+        <body>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container">
+                    <a class="navbar-brand" href="/admin/">🏪 Visage Admin</a>
+                    <div class="navbar-nav">
+                        <a class="nav-link" href="/admin/">Dashboard</a>
+                        <a class="nav-link active" href="/admin/products">Produtos</a>
+                        <a class="nav-link" href="/admin/orders">Pedidos</a>
+                        <a class="nav-link" href="/admin/suppliers">Fornecedores</a>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="container mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1><i class="fas fa-edit"></i> Editar Produto: {{ product.name }}</h1>
+                    <a href="/admin/products" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="POST">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Nome do Produto *</label>
+                                                <input type="text" class="form-control" name="name" value="{{ product.name }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Categoria</label>
+                                                <select class="form-control" name="category">
+                                                    <option value="">Selecione uma categoria</option>
+                                                    <option value="Pomadas" {{ 'selected' if product.category == 'Pomadas' }}>Pomadas</option>
+                                                    <option value="Óleos" {{ 'selected' if product.category == 'Óleos' }}>Óleos</option>
+                                                    <option value="Shampoos" {{ 'selected' if product.category == 'Shampoos' }}>Shampoos</option>
+                                                    <option value="Ceras" {{ 'selected' if product.category == 'Ceras' }}>Ceras</option>
+                                                    <option value="Pós-Barba" {{ 'selected' if product.category == 'Pós-Barba' }}>Pós-Barba</option>
+                                                    <option value="Kits" {{ 'selected' if product.category == 'Kits' }}>Kits</option>
+                                                    <option value="Outros" {{ 'selected' if product.category == 'Outros' }}>Outros</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Descrição</label>
+                                        <textarea class="form-control" name="description" rows="3">{{ product.description or '' }}</textarea>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Preço de Venda (R$) *</label>
+                                                <input type="number" class="form-control" name="price" step="0.01" min="0" value="{{ product.price }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Preço de Custo (R$)</label>
+                                                <input type="number" class="form-control" name="cost_price" step="0.01" min="0" value="{{ product.cost_price or 0 }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">SKU</label>
+                                                <input type="text" class="form-control" name="sku" value="{{ product.sku or '' }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Estoque Atual</label>
+                                                <input type="number" class="form-control" name="stock_quantity" min="0" value="{{ product.stock_quantity }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Estoque Mínimo</label>
+                                                <input type="number" class="form-control" name="min_stock_level" min="0" value="{{ product.min_stock_level }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Estoque Máximo</label>
+                                                <input type="number" class="form-control" name="max_stock_level" min="1" value="{{ product.max_stock_level }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Fornecedor</label>
+                                                <input type="text" class="form-control" name="supplier" value="{{ product.supplier or '' }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">URL da Imagem</label>
+                                                <input type="url" class="form-control" name="image_url" value="{{ product.image_url or '' }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="in_stock" id="in_stock" {{ 'checked' if product.in_stock }}>
+                                            <label class="form-check-label" for="in_stock">
+                                                Produto disponível para venda
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <a href="/admin/products" class="btn btn-secondary me-md-2">Cancelar</a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> Salvar Alterações
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Preview da Imagem</h5>
+                            </div>
+                            <div class="card-body text-center">
+                                {% if product.image_url %}
+                                    <img src="{{ product.image_url }}" alt="{{ product.name }}" 
+                                         class="img-fluid rounded" style="max-height: 200px;">
+                                {% else %}
+                                    <div class="bg-light d-flex align-items-center justify-content-center" 
+                                         style="height: 200px; border-radius: 8px;">
+                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                    </div>
+                                    <p class="text-muted mt-2">Nenhuma imagem</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        </body>
+        </html>
+        '''
+        return render_template_string(html, product=product)
 
-# Adicionar views
-admin.add_view(SimpleProductView(Product, db.session, name='Produtos'))
-admin.add_view(SimpleOrderView(Order, db.session, name='Pedidos'))
+    @expose('/products/delete/<int:id>')
+    def products_delete(self, id):
+        product = Product.query.get_or_404(id)
+        try:
+            db.session.delete(product)
+            db.session.commit()
+            flash('Produto excluído com sucesso!', 'success')
+        except Exception as e:
+            flash(f'Erro ao excluir produto: {str(e)}', 'error')
+            db.session.rollback()
+        
+        return redirect(url_for('admin.products_list'))
 
-print("Admin simples configurado!")
+    @expose('/orders')
+    def orders_list(self):
+        page = request.args.get('page', 1, type=int)
+        per_page = 20
+        orders = Order.query.order_by(Order.created_at.desc()).paginate(page=page, per_page=per_page, error_out=False)
+        
+        html = '''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Pedidos - Admin Visage</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        </head>
+        <body>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container">
+                    <a class="navbar-brand" href="/admin/">🏪 Visage Admin</a>
+                    <div class="navbar-nav">
+                        <a class="nav-link" href="/admin/">Dashboard</a>
+                        <a class="nav-link" href="/admin/products">Produtos</a>
+                        <a class="nav-link active" href="/admin/orders">Pedidos</a>
+                        <a class="nav-link" href="/admin/suppliers">Fornecedores</a>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="container mt-4">
+                <h1><i class="fas fa-shopping-cart"></i> Gerenciar Pedidos</h1>
+                
+                <div class="table-responsive mt-4">
+                    <table class="table table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Telefone</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>WhatsApp</th>
+                                <th>Data</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders.items %}
+                            <tr>
+                                <td><strong>#{{ order.id }}</strong></td>
+                                <td>{{ order.customer_name }}</td>
+                                <td>{{ order.customer_phone or '-' }}</td>
+                                <td><strong>R$ {{ "%.2f"|format(order.total_amount) }}</strong></td>
+                                <td>
+                                    <span class="badge bg-{% if order.status == 'completed' %}success{% elif order.status == 'pending' %}warning{% else %}danger{% endif %}">
+                                        {{ order.status.title() }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if order.whatsapp_sent %}
+                                        <i class="fas fa-check-circle text-success"></i>
+                                    {% else %}
+                                        <i class="fas fa-times-circle text-danger"></i>
+                                    {% endif %}
+                                </td>
+                                <td>{{ order.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="/admin/orders/view/{{ order.id }}" class="btn btn-outline-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="/admin/orders/edit/{{ order.id }}" class="btn btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </body>
+        </html>
+        '''
+        return render_template_string(html, orders=orders)
+
+    @expose('/suppliers')
+    def suppliers_list(self):
+        suppliers = Supplier.query.all()
+        
+        html = '''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Fornecedores - Admin Visage</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        </head>
+        <body>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container">
+                    <a class="navbar-brand" href="/admin/">🏪 Visage Admin</a>
+                    <div class="navbar-nav">
+                        <a class="nav-link" href="/admin/">Dashboard</a>
+                        <a class="nav-link" href="/admin/products">Produtos</a>
+                        <a class="nav-link" href="/admin/orders">Pedidos</a>
+                        <a class="nav-link active" href="/admin/suppliers">Fornecedores</a>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="container mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1><i class="fas fa-truck"></i> Gerenciar Fornecedores</h1>
+                    <a href="/admin/suppliers/new" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Novo Fornecedor
+                    </a>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Contato</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for supplier in suppliers %}
+                            <tr>
+                                <td><strong>{{ supplier.name }}</strong></td>
+                                <td>{{ supplier.contact_person or '-' }}</td>
+                                <td>{{ supplier.email or '-' }}</td>
+                                <td>{{ supplier.phone or '-' }}</td>
+                                <td>
+                                    {% if supplier.is_active %}
+                                        <span class="badge bg-success">Ativo</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Inativo</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="/admin/suppliers/edit/{{ supplier.id }}" class="btn btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="/admin/suppliers/delete/{{ supplier.id }}" class="btn btn-outline-danger"
+                                           onclick="return confirm('Tem certeza que deseja excluir este fornecedor?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </body>
+        </html>
+        '''
+        return render_template_string(html, suppliers=suppliers)
+
+# Admin CRUD completo e funcional
+admin = Admin(app, name='Admin CRUD - Visage', index_view=AdminCRUDView(name='Dashboard'))
+
+print("Admin CRUD completo configurado!")
