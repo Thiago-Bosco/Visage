@@ -37,17 +37,21 @@ class SecureAdminIndexView(AdminIndexView):
         # Low stock alerts
         low_stock_alerts = Product.query.filter(Product.stock_quantity <= Product.min_stock_level).limit(10).all()
         
-        return self.render('admin/index.html', 
-                         total_products=total_products,
-                         products_in_stock=products_in_stock,
-                         low_stock_products=low_stock_products,
-                         out_of_stock=out_of_stock,
-                         total_orders=total_orders,
-                         pending_orders=pending_orders,
-                         total_stock_value=total_stock_value,
-                         total_retail_value=total_retail_value,
-                         recent_movements=recent_movements,
-                         low_stock_alerts=low_stock_alerts)
+        try:
+            return self.render('admin/index.html', 
+                             total_products=total_products,
+                             products_in_stock=products_in_stock,
+                             low_stock_products=low_stock_products,
+                             out_of_stock=out_of_stock,
+                             total_orders=total_orders,
+                             pending_orders=pending_orders,
+                             total_stock_value=total_stock_value,
+                             total_retail_value=total_retail_value,
+                             recent_movements=recent_movements,
+                             low_stock_alerts=low_stock_alerts)
+        except Exception as e:
+            logging.error(f"Erro ao carregar admin dashboard: {e}")
+            return f"<h1>Dashboard Admin - Visage</h1><p>Erro: {str(e)}</p>"
 
 class InventoryManagementView(BaseView):
     """
