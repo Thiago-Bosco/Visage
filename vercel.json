@@ -15,10 +15,5 @@
   "env": {
     "FLASK_ENV": "production",
     "PYTHONPATH": "/var/task"
-  },
-  "functions": {
-    "main.py": {
-      "maxDuration": 30
-    }
   }
 }
