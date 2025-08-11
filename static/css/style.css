@@ -108,6 +108,17 @@
     backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(201, 169, 110, 0.2);
     transition: all 0.3s ease;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    width: 100%;
+}
+
+/* Add padding to body to compensate for fixed navbar */
+body {
+    padding-top: 80px;
 }
 
 .navbar-brand {
