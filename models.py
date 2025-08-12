@@ -51,14 +51,13 @@ class Product(db.Model):
         self.in_stock = self.stock_quantity > 0
         
         # Create stock movement record
-        movement = StockMovement(
-            product_id=self.id,
-            movement_type='increase' if quantity_change > 0 else 'decrease',
-            quantity=abs(quantity_change),
-            old_quantity=old_quantity,
-            new_quantity=self.stock_quantity,
-            reason=reason
-        )
+        movement = StockMovement()
+        movement.product_id = self.id
+        movement.movement_type = 'increase' if quantity_change > 0 else 'decrease'
+        movement.quantity = abs(quantity_change)
+        movement.old_quantity = old_quantity
+        movement.new_quantity = self.stock_quantity
+        movement.reason = reason
         db.session.add(movement)
         return movement
 
