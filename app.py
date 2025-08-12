@@ -19,11 +19,15 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# configure the database, relative to the app instance folder
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///barbershop.db")
+# configure the database for PostgreSQL (Supabase)
+# Clean and fix the URL
+database_url = "postgresql://postgres.fnwfjminutnkeuboskte:Ubunto323231%40@aws-0-us-east-2.pooler.supabase.com:6543/postgres"
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_pre_ping": True,
+    "pool_recycle": 300,
     "pool_timeout": 20,
-    "pool_recycle": -1,
 }
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -46,7 +50,8 @@ with app.app_context():
     # Create admin user if none exists
     from models import AdminUser
     if AdminUser.query.count() == 0:
-        admin = AdminUser(username='visagecosmeticos')
+        admin = AdminUser()
+        admin.username = 'visagecosmeticos'
         admin.set_password('270174CLcl')
         db.session.add(admin)
         db.session.commit()
