@@ -19,13 +19,20 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# configure the database - use SQLite for now, Supabase can be configured later
-# The password authentication is failing, so let's use SQLite temporarily
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///barbershop.db"
+# configure the database for PostgreSQL (Supabase)
+# Properly encode the password with @ symbol
+import urllib.parse
+password = "Ubunto323231@"
+encoded_password = urllib.parse.quote(password, safe='')
+database_url = f"postgresql://postgres.fnwfjminutnkeuboskte:{encoded_password}@aws-0-us-east-2.pooler.supabase.com:6543/postgres"
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_pre_ping": True,
     "pool_recycle": 300,
     "pool_timeout": 20,
+    "connect_args": {
+        "sslmode": "require"
+    }
 }
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
