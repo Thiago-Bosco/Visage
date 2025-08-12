@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime
 from sqlalchemy import Text
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Product(db.Model):
     __tablename__ = 'products'
@@ -165,3 +166,24 @@ class StockAlert(db.Model):
     
     def __repr__(self):
         return f'<StockAlert {self.product.name}: {self.alert_type}>'
+
+class AdminUser(db.Model):
+    __tablename__ = 'admin_users'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_login = db.Column(db.DateTime, nullable=True)
+    
+    def set_password(self, password):
+        """Cria hash seguro da senha"""
+        self.password_hash = generate_password_hash(password)
+    
+    def check_password(self, password):
+        """Verifica se a senha está correta"""
+        return check_password_hash(self.password_hash, password)
+    
+    def __repr__(self):
+        return f'<AdminUser {self.username}>'

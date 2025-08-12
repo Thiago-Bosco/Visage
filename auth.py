@@ -1,21 +1,17 @@
 from functools import wraps
 from flask import session, redirect, url_for, request, flash
-import hashlib
-
-# Credenciais únicas do admin
-ADMIN_CREDENTIALS = {
-    'visagecosmeticos': '270174CLcl'  # usuário único: visagecosmeticos
-}
-
-def hash_password(password):
-    """Hash da senha para comparação segura"""
-    return hashlib.sha256(password.encode()).hexdigest()
+from datetime import datetime
 
 def verify_password(username, password):
-    """Verifica se as credenciais estão corretas"""
-    if username in ADMIN_CREDENTIALS:
-        stored_password = ADMIN_CREDENTIALS[username]
-        return password == stored_password
+    """Verifica se as credenciais estão corretas no banco de dados"""
+    from models import AdminUser
+    user = AdminUser.query.filter_by(username=username, is_active=True).first()
+    if user and user.check_password(password):
+        # Atualiza último login
+        user.last_login = datetime.utcnow()
+        from app import db
+        db.session.commit()
+        return True
     return False
 
 def login_required(f):

@@ -43,6 +43,15 @@ with app.app_context():
     except Exception as e:
         print(f"Erro ao carregar admin customizado: {e}")
     
+    # Create admin user if none exists
+    from models import AdminUser
+    if AdminUser.query.count() == 0:
+        admin = AdminUser(username='visagecosmeticos')
+        admin.set_password('270174CLcl')
+        db.session.add(admin)
+        db.session.commit()
+        print("Usuário administrador criado: visagecosmeticos")
+    
     # Create some initial products if none exist
     from models import Product
     if Product.query.count() == 0:
