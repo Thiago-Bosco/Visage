@@ -2,10 +2,9 @@ from functools import wraps
 from flask import session, redirect, url_for, request, flash
 import hashlib
 
-# Credenciais simples do admin (em produção, usar um banco de dados)
+# Credenciais únicas do admin
 ADMIN_CREDENTIALS = {
-    'admin': 'admin123',  # usuário: admin, senha: admin123
-    'visage': 'visage2025'  # usuário: visage, senha: visage2025
+    'visagecosmeticos': '270174CLcl'  # usuário único: visagecosmeticos
 }
 
 def hash_password(password):
