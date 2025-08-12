@@ -1,118 +1,159 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR" data-bs-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Visage - Distribuidora de Produtos Profissionais{% endblock %}</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2IDJMMjAgOEwyNiA4TDI2IDE0TDIwIDE0TDE5IDE2TDIwIDE4TDI2IDE4TDI2IDI0TDIwIDI0TDE2IDMwTDEyIDI0TDYgMjRMNiAxOEwxMiAxOEwxMyAxNkwxMiAxNEw2IDE0TDYgOEwxMiA4TDE2IDJaIiBmaWxsPSIjOEI0NTEzIi8+Cjwvc3ZnPgo=">
-</head>
-<body>
-    <!-- Modern Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark modern-navbar">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
-                <div class="brand-logo">
-                    <i class="fas fa-cut"></i>
-                </div>
-                <span class="brand-text">
-                    <strong>Visage</strong>
-                    <span class="text-gold">Distribuidora</span>
-                </span>
-            </a>
-            
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link modern-nav-link" href="{{ url_for('index') }}">
-                            <i class="fas fa-home me-2"></i>
-                            Início
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link modern-nav-link" href="/admin">
-                            <i class="fas fa-cog me-2"></i>
-                            Admin
-                        </a>
-                    </li>
-                </ul>
-                
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link cart-link position-relative" href="{{ url_for('cart') }}">
-                            <div class="cart-icon">
-                                <i class="fas fa-shopping-cart"></i>
-                                {% if cart_count > 0 %}
-                                <span class="cart-badge">{{ cart_count }}</span>
-                                {% endif %}
-                            </div>
-                            <span class="d-none d-lg-inline ms-2">Carrinho</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>
+            {% block title %}Visage - Distribuidora de Produtos Profissionais{%
+            endblock %}
+        </title>
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="container mt-3">
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }} me-2"></i>
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <!-- Bootstrap CSS -->
+        <link
+            href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css"
+            rel="stylesheet"
+        />
+
+        <!-- Font Awesome Icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        />
+
+        <!-- Custom CSS -->
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/style.css') }}"
+        />
+
+        <!-- Favicon -->
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2IDJMMjAgOEwyNiA4TDI2IDE0TDIwIDE0TDE5IDE2TDIwIDE4TDI2IDE4TDI2IDI0TDIwIDI0TDE2IDMwTDEyIDI0TDYgMjRMNiAxOEwxMiAxOEwxMyAxNkwxMiAxNEw2IDE0TDYgOEwxMiA4TDE2IDJaIiBmaWxsPSIjOEI0NTEzIi8+Cjwvc3ZnPgo="
+        />
+    </head>
+    <body>
+        <!-- Modern Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark modern-navbar">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <div class="brand-logo">
+                        <i class="fas fa-cut"></i>
                     </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
+                    <span class="brand-text">
+                        <strong>Visage</strong>
+                        <span class="text-gold">Distribuidora</span>
+                    </span>
+                </a>
 
-    <!-- Main Content -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+                <button
+                    class="navbar-toggler border-0"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5><i class="fas fa-cut me-2"></i>Visage Distribuidora</h5>
-                    <p class="mb-0">Distribuidora de produtos profissionais para barbeiros</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="mb-0">
-                        <i class="fab fa-whatsapp me-2"></i>
-                        Pedidos via WhatsApp
-                    </p>
-                    <small class="text-muted">Desenvolvido com Flask & Bootstrap</small>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link modern-nav-link"
+                                href="{{ url_for('index') }}"
+                            >
+                                <i class="fas fa-home me-2"></i>
+                                Início
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link" href="/admin">
+                                <i class="fas fa-cog me-2"></i>
+                                Admin
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link cart-link position-relative"
+                                href="{{ url_for('cart') }}"
+                            >
+                                <div class="cart-icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    {% if cart_count > 0 %}
+                                    <span class="cart-badge"
+                                        >{{ cart_count }}</span
+                                    >
+                                    {% endif %}
+                                </div>
+                                <span class="d-none d-lg-inline ms-2"
+                                    >Carrinho</span
+                                >
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
+        </nav>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+        <div class="container mt-3">
+            {% for category, message in messages %}
+            <div
+                class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+                role="alert"
+            >
+                <i
+                    class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }} me-2"
+                ></i>
+                {{ message }}
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                ></button>
+            </div>
+            {% endfor %}
         </div>
-    </footer>
+        {% endif %} {% endwith %}
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
-    
-    {% block scripts %}{% endblock %}
-</body>
+        <!-- Main Content -->
+        <main>{% block content %}{% endblock %}</main>
+
+        <!-- Footer -->
+        <footer class="bg-dark text-light py-4 mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>
+                            <i class="fas fa-cut me-2"></i>Visage Distribuidora
+                        </h5>
+                        <p class="mb-0">
+                            Distribuidora de produtos profissionais para
+                            barbeiros
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <p class="mb-0">
+                            <i class="fab fa-whatsapp me-2"></i>
+                            Pedidos via WhatsApp
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Custom JS -->
+        <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+
+        {% block scripts %}{% endblock %}
+    </body>
 </html>
