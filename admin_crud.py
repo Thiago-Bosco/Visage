@@ -1,7 +1,9 @@
-from flask import render_template_string, request, redirect, url_for, flash, Blueprint, send_from_directory
+from flask import render_template_string, request, redirect, url_for, flash, Blueprint, send_from_directory, render_template
 from werkzeug.utils import secure_filename
 from app import app, db
 from models import Product, Order, StockMovement, Supplier, OrderItem
+from forms import AdminLoginForm
+from auth import login_required, verify_password, login_admin, logout_admin, is_admin_logged_in
 from datetime import datetime
 import os
 import uuid
@@ -20,7 +22,42 @@ if not os.path.exists(UPLOAD_FOLDER):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@admin_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    """Página de login para administradores"""
+    if is_admin_logged_in():
+        return redirect(url_for('admin_crud.index'))
+    
+    form = AdminLoginForm()
+    
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        
+        if verify_password(username, password):
+            login_admin(username)
+            flash(f'Bem-vindo, {username}!', 'success')
+            
+            # Redireciona para a página que o usuário estava tentando acessar
+            next_url = request.form.get('next') or request.args.get('next')
+            if next_url and next_url.startswith('/admin/'):
+                return redirect(next_url)
+            return redirect(url_for('admin_crud.index'))
+        else:
+            flash('Usuário ou senha incorretos.', 'error')
+    
+    return render_template('admin_login.html', form=form)
+
+@admin_bp.route('/logout')
+@login_required
+def logout():
+    """Logout do administrador"""
+    logout_admin()
+    flash('Logout realizado com sucesso!', 'success')
+    return redirect(url_for('admin_crud.login'))
+
 @admin_bp.route('/')
+@login_required
 def index():
     # Dashboard completo
     total_products = Product.query.count()
@@ -40,12 +77,17 @@ def index():
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
                 <a class="navbar-brand" href="/admin/">🏪 Visage Admin</a>
-                <div class="navbar-nav">
+                <div class="navbar-nav me-auto">
                     <a class="nav-link" href="/admin/">Dashboard</a>
                     <a class="nav-link" href="/admin/products">Produtos</a>
                     <a class="nav-link" href="/admin/orders">Pedidos</a>
                     <a class="nav-link" href="/admin/suppliers">Fornecedores</a>
                     <a class="nav-link" href="/">Site</a>
+                </div>
+                <div class="navbar-nav">
+                    <a class="nav-link text-light" href="/admin/logout">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </a>
                 </div>
             </div>
         </nav>
@@ -133,6 +175,7 @@ def index():
                                 recent_orders=recent_orders)
 
 @admin_bp.route('/products')
+@login_required
 def products_list():
     page = request.args.get('page', 1, type=int)
     per_page = 20
@@ -232,6 +275,7 @@ def products_list():
     return render_template_string(html, products=products)
 
 @admin_bp.route('/products/new', methods=['GET', 'POST'])
+@login_required
 def products_new():
     if request.method == 'POST':
         try:
@@ -458,6 +502,7 @@ def products_new():
     return render_template_string(html)
 
 @admin_bp.route('/products/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def products_edit(id):
     product = Product.query.get_or_404(id)
     
@@ -709,6 +754,7 @@ def products_edit(id):
     return render_template_string(html, product=product)
 
 @admin_bp.route('/products/delete/<int:id>')
+@login_required
 def products_delete(id):
     product = Product.query.get_or_404(id)
     try:
@@ -722,6 +768,7 @@ def products_delete(id):
     return redirect(url_for('admin_crud.products_list'))
 
 @admin_bp.route('/orders')
+@login_required
 def orders_list():
     page = request.args.get('page', 1, type=int)
     per_page = 20
@@ -807,6 +854,7 @@ def orders_list():
     return render_template_string(html, orders=orders)
 
 @admin_bp.route('/orders/view/<int:id>')
+@login_required
 def orders_view(id):
     order = Order.query.get_or_404(id)
     order_items = OrderItem.query.filter_by(order_id=id).all()
@@ -919,6 +967,7 @@ def orders_view(id):
     return render_template_string(html, order=order, order_items=order_items)
 
 @admin_bp.route('/orders/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def orders_edit(id):
     order = Order.query.get_or_404(id)
     
@@ -1031,6 +1080,7 @@ def orders_edit(id):
     return render_template_string(html, order=order)
 
 @admin_bp.route('/suppliers')
+@login_required
 def suppliers_list():
     suppliers = Supplier.query.all()
     

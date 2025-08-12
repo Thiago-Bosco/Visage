@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, FloatField, TextAreaField, BooleanField, SelectField
+from wtforms import StringField, IntegerField, FloatField, TextAreaField, BooleanField, SelectField, PasswordField
 from wtforms.validators import DataRequired, NumberRange, Length, Optional
 
 class CheckoutForm(FlaskForm):
@@ -45,3 +45,13 @@ class AddToCartForm(FlaskForm):
         DataRequired(message='Quantidade é obrigatória'),
         NumberRange(min=1, max=99, message='Quantidade deve ser entre 1 e 99')
     ], default=1)
+
+class AdminLoginForm(FlaskForm):
+    username = StringField('Usuário', validators=[
+        DataRequired(message='Usuário é obrigatório'),
+        Length(min=3, max=50, message='Usuário deve ter entre 3 e 50 caracteres')
+    ])
+    password = PasswordField('Senha', validators=[
+        DataRequired(message='Senha é obrigatória'),
+        Length(min=4, max=100, message='Senha deve ter entre 4 e 100 caracteres')
+    ])
