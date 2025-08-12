@@ -301,14 +301,13 @@ def products_new():
             product.min_stock_level = int(request.form.get('min_stock_level', 5))
             product.max_stock_level = int(request.form.get('max_stock_level', 100))
             product.supplier = request.form.get('supplier')
-            product.sku = request.form.get('sku') or None  # Allow empty SKU to be auto-generated
+            product.sku = request.form.get('sku') or ""
             product.image_url = image_url
             product.category = request.form.get('category')
             product.in_stock = request.form.get('in_stock') == 'on'
             
-            # Generate SKU if not provided
-            if not product.sku:
-                product.generate_sku()
+            # Gerar SKU único se não fornecido
+            product.generate_sku()
             
             db.session.add(product)
             db.session.commit()
@@ -317,8 +316,10 @@ def products_new():
             return redirect(url_for('admin_crud.products_list'))
             
         except Exception as e:
-            flash(f'Erro ao criar produto: {str(e)}', 'error')
+            flash('Erro ao criar produto. Verifique os dados e tente novamente.', 'error')
             db.session.rollback()
+            # Log interno apenas no servidor
+            print(f"[ADMIN] Erro ao criar produto: {str(e)}")
     
     html = '''
     <!DOCTYPE html>

@@ -83,6 +83,29 @@ with app.app_context():
         db.session.commit()
         logging.info("Produto inicial criado com sucesso!")
 
+# Configurar tratamento de erros globais para usuários finais
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('error.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('error.html'), 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # Log interno para desenvolvedores
+    app.logger.error(f'Erro interno: {str(e)}')
+    
+    # Mensagem amigável para usuários
+    if hasattr(e, 'code') and e.code == 404:
+        return render_template('error.html'), 404
+    
+    # Para outros erros, retornar mensagem genérica
+    db.session.rollback()
+    return render_template('error.html'), 500
+
 # Configure Flask-WTF (CSRF disabled for now)
 from flask_wtf.csrf import CSRFProtect
 # csrf = CSRFProtect(app)  # Disabled temporarily

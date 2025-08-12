@@ -66,7 +66,7 @@ def add_to_cart(product_id):
         
     except Exception as e:
         logging.error(f"Erro ao adicionar produto ao carrinho: {e}")
-        flash('Erro ao adicionar produto ao carrinho.', 'error')
+        flash('Produto não pôde ser adicionado. Tente novamente.', 'error')
     
     return redirect(url_for('index'))
 
@@ -124,51 +124,57 @@ def checkout():
     total = sum(item.total_price for item in cart_items)
     
     if form.validate_on_submit():
-        # Create order
-        order = Order(
-            customer_name=form.customer_name.data,
-            customer_phone=form.customer_phone.data,
-            total_amount=total
-        )
-        db.session.add(order)
-        db.session.flush()  # Get the order ID
-        
-        # Create order items and update stock
-        for cart_item in cart_items:
-            product = cart_item.product
-            
-            # Check stock availability before processing
-            if cart_item.quantity > product.stock_quantity:
-                flash(f'Estoque insuficiente para {product.name}. Apenas {product.stock_quantity} disponíveis.', 'error')
-                return redirect(url_for('cart'))
-            
-            order_item = OrderItem(
-                order_id=order.id,
-                product_id=cart_item.product_id,
-                quantity=cart_item.quantity,
-                unit_price=cart_item.product.price
+        try:
+            # Create order
+            order = Order(
+                customer_name=form.customer_name.data,
+                customer_phone=form.customer_phone.data,
+                total_amount=total
             )
-            db.session.add(order_item)
+            db.session.add(order)
+            db.session.flush()  # Get the order ID
             
-            # Update stock quantity using the model method
-            movement = product.update_stock(-cart_item.quantity, f'Venda - Pedido #{order.id}')
-            movement.reference_id = str(order.id)
-        
-        # Clear cart
-        for cart_item in cart_items:
-            db.session.delete(cart_item)
-        
-        db.session.commit()
-        
-        # Generate WhatsApp message
-        whatsapp_url = generate_whatsapp_message(order)
-        
-        # Mark order as WhatsApp sent
-        order.whatsapp_sent = True
-        db.session.commit()
-        
-        flash('Pedido finalizado! Você será redirecionado para o WhatsApp.', 'success')
-        return redirect(whatsapp_url)
+            # Create order items and update stock
+            for cart_item in cart_items:
+                product = cart_item.product
+                
+                # Check stock availability before processing
+                if cart_item.quantity > product.stock_quantity:
+                    flash(f'Estoque insuficiente para {product.name}. Apenas {product.stock_quantity} disponíveis.', 'error')
+                    return redirect(url_for('cart'))
+                
+                order_item = OrderItem(
+                    order_id=order.id,
+                    product_id=cart_item.product_id,
+                    quantity=cart_item.quantity,
+                    unit_price=cart_item.product.price
+                )
+                db.session.add(order_item)
+                
+                # Update stock quantity using the model method
+                movement = product.update_stock(-cart_item.quantity, f'Venda - Pedido #{order.id}')
+                movement.reference_id = str(order.id)
+            
+            # Clear cart
+            for cart_item in cart_items:
+                db.session.delete(cart_item)
+            
+            db.session.commit()
+            
+            # Generate WhatsApp message
+            whatsapp_url = generate_whatsapp_message(order)
+            
+            # Mark order as WhatsApp sent
+            order.whatsapp_sent = True
+            db.session.commit()
+            
+            flash('Pedido finalizado! Você será redirecionado para o WhatsApp.', 'success')
+            return redirect(whatsapp_url)
+            
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Erro no checkout: {e}")
+            flash('Ocorreu um erro ao processar seu pedido. Tente novamente.', 'error')
     
     cart_count = len(cart_items)
     return render_template('checkout.html', form=form, cart_items=cart_items, 
