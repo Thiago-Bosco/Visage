@@ -292,20 +292,23 @@ def products_new():
                     image_url = f'/static/uploads/{filename}'
             
             # Criar novo produto
-            product = Product(
-                name=request.form.get('name'),
-                description=request.form.get('description'),
-                price=float(request.form.get('price', 0)),
-                cost_price=float(request.form.get('cost_price', 0)),
-                stock_quantity=int(request.form.get('stock_quantity', 0)),
-                min_stock_level=int(request.form.get('min_stock_level', 5)),
-                max_stock_level=int(request.form.get('max_stock_level', 100)),
-                supplier=request.form.get('supplier'),
-                sku=request.form.get('sku'),
-                image_url=image_url,
-                category=request.form.get('category'),
-                in_stock=request.form.get('in_stock') == 'on'
-            )
+            product = Product()
+            product.name = request.form.get('name')
+            product.description = request.form.get('description')
+            product.price = float(request.form.get('price', 0))
+            product.cost_price = float(request.form.get('cost_price', 0))
+            product.stock_quantity = int(request.form.get('stock_quantity', 0))
+            product.min_stock_level = int(request.form.get('min_stock_level', 5))
+            product.max_stock_level = int(request.form.get('max_stock_level', 100))
+            product.supplier = request.form.get('supplier')
+            product.sku = request.form.get('sku') or None  # Allow empty SKU to be auto-generated
+            product.image_url = image_url
+            product.category = request.form.get('category')
+            product.in_stock = request.form.get('in_stock') == 'on'
+            
+            # Generate SKU if not provided
+            if not product.sku:
+                product.generate_sku()
             
             db.session.add(product)
             db.session.commit()

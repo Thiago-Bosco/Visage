@@ -126,20 +126,28 @@ The application is designed to be easily deployable on platforms like Replit, He
 
 ## Recent Changes (August 12, 2025)
 
-- ✅ Successfully migrated from Replit Agent to standard Replit environment
+- ✅ **Successfully migrated from Replit Agent to standard Replit environment**
 - ✅ Fixed admin panel template recursion issues by simplifying template structure
 - ✅ Replaced complex admin templates with clean, functional Bootstrap-based design
-- ✅ Maintained SQLite database as requested by user
+- ✅ Maintained SQLite database (with Supabase PostgreSQL ready for activation)
 - ✅ All admin functionality working: dashboard, product management, orders, stock movements
 - ✅ Application running smoothly on port 5000 with gunicorn
 - ✅ Preserved all existing functionality while improving stability
 - ✅ Simplified admin interface to fix form validation errors
 - ✅ Improved image display formatting with better styling
 - ✅ All admin buttons and CRUD operations validated and working
-- ✅ **NEW: Admin authentication system implemented**
+- ✅ **Admin authentication system implemented**
   - Login protection for all admin routes
   - Secure session management
   - Custom login page with proper form validation
   - Logout functionality with session cleanup
   - Credentials: visagecosmeticos / 270174CLcl
   - Automatic redirection on unauthorized access
+- ✅ **Fixed SKU duplicate error with automatic SKU generation**
+  - Products can now be created without manual SKU entry
+  - Auto-generates unique SKUs based on product name and UUID
+  - Resolves PostgreSQL unique constraint violations
+- ✅ **Supabase PostgreSQL integration prepared**
+  - RLS activated as requested
+  - Connection string configured and tested
+  - Can be easily switched from SQLite when needed

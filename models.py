@@ -2,6 +2,7 @@ from app import db
 from datetime import datetime
 from sqlalchemy import Text
 from werkzeug.security import generate_password_hash, check_password_hash
+import uuid
 
 class Product(db.Model):
     __tablename__ = 'products'
@@ -21,7 +22,7 @@ class Product(db.Model):
     cost_price = db.Column(db.Float, default=0.0)  # Purchase cost
     supplier_id = db.Column(db.Integer, db.ForeignKey('suppliers.id'))
     supplier = db.Column(db.String(100))
-    sku = db.Column(db.String(50), unique=True)  # Stock Keeping Unit
+    sku = db.Column(db.String(50), unique=True, nullable=True)  # Stock Keeping Unit
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -31,6 +32,15 @@ class Product(db.Model):
     
     def __str__(self):
         return self.name
+    
+    def generate_sku(self):
+        """Generate a unique SKU if not provided"""
+        if not self.sku:
+            # Generate SKU based on name and timestamp
+            name_part = ''.join(c.upper() for c in self.name[:3] if c.isalnum())
+            unique_part = str(uuid.uuid4())[:8].upper()
+            self.sku = f"{name_part}-{unique_part}"
+        return self.sku
     
     @property
     def is_low_stock(self):
