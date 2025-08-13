@@ -1,0 +1,295 @@
+"TimeUTC","timestampInMs","requestPath","requestMethod","requestQueryString","responseStatusCode","requestId","requestUserAgent","level","environment","branch","vercelCache","type","function","host","deploymentDomain","deploymentId","durationMs","region","maxMemoryUsed","memorySize","message","projectId","traceId","sessionId","invocationId","instanceId","concurrency"
+"2025-08-13 19:32:38",1755113558014,"visage-fawn.vercel.app/","GET","",-1,"jkrt4-1755113555621-ff936aaa82b2","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36","error","production","main","MISS","lambda","/main.py","visage-fawn.vercel.app","visage-fawn.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEQ21BMRPFNNEY3VEV9WF7","",-1
+"2025-08-13 19:32:37",1755113557858,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.png","GET","",-1,"ffnbp-1755113555973-9a4cd293721b","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEQ21R5WPJ7V38TN3NAY0H","",-1
+"2025-08-13 19:32:36",1755113556024,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.png","GET","",500,"ffnbp-1755113555973-9a4cd293721b","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1818,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEQ21R5WPJ7V38TN3NAY0H","",1
+"2025-08-13 19:32:36",1755113556011,"visage-fawn.vercel.app/","GET","",500,"jkrt4-1755113555621-ff936aaa82b2","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36","error","production","main","MISS","lambda","/main.py","visage-fawn.vercel.app","visage-fawn.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1985,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEQ21BMRPFNNEY3VEV9WF7","",1
+"2025-08-13 19:32:33",1755113553851,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.png","GET","",-1,"x5j5q-1755113551820-af1a246c2aae","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPXZMEHD44B6676T0N5JK","",-1
+"2025-08-13 19:32:31",1755113551860,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.png","GET","",500,"x5j5q-1755113551820-af1a246c2aae","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1972,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPXZMEHD44B6676T0N5JK","",1
+"2025-08-13 19:32:30",1755113550715,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.png","GET","",-1,"rdq9c-1755113548713-96f14e5d669f","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPTYJHYEH1ZYTNR0X7CNS","",-1
+"2025-08-13 19:32:28",1755113548753,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.png","GET","",500,"rdq9c-1755113548713-96f14e5d669f","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1945,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPTYJHYEH1ZYTNR0X7CNS","",1
+"2025-08-13 19:32:28",1755113548670,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.ico","GET","",-1,"gzsbp-1755113546678-8fd9d659433d","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPRZ066HEJF980B99ER63","",-1
+"2025-08-13 19:32:26",1755113546720,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.ico","GET","",500,"gzsbp-1755113546678-8fd9d659433d","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1936,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPRZ066HEJF980B99ER63","",1
+"2025-08-13 19:32:24",1755113544557,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.ico","GET","",-1,"78r2v-1755113542499-28c604e58f24","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPMWCZQASFRFHQKH820JE","",-1
+"2025-08-13 19:32:23",1755113543864,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.ico","GET","",-1,"ltf4h-1755113541921-be4bf5276f9e","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPMAA44P75MVWT8R2MQBJ","",-1
+"2025-08-13 19:32:22",1755113542540,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.ico","GET","",500,"78r2v-1755113542499-28c604e58f24","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",2001,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPMWCZQASFRFHQKH820JE","",1
+"2025-08-13 19:32:21",1755113541962,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.ico","GET","",500,"ltf4h-1755113541921-be4bf5276f9e","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1886,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPMAA44P75MVWT8R2MQBJ","",1
+"2025-08-13 19:32:21",1755113541744,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",-1,"d5fmt-1755113537575-563047838d4e","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPG2K2BZKVRDDWATD5XHA","",-1
+"2025-08-13 19:32:21",1755113541459,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.ico","GET","",-1,"924g5-1755113539383-c24dd48c3df2","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPHV8ADX2AC715K0JTKMP","",-1
+"2025-08-13 19:32:21",1755113541431,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.ico","GET","",-1,"2d454-1755113539700-b946f8c50b11","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPJ4V6AP7VV08GA4DZ6N9","",-1
+"2025-08-13 19:32:20",1755113540779,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.ico","GET","",-1,"d79c7-1755113539141-1ad1e8624da4","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPHKC8Z756T30FMC4HAQ7","",-1
+"2025-08-13 19:32:19",1755113539739,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.ico","GET","",500,"2d454-1755113539700-b946f8c50b11","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1675,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPJ4V6AP7VV08GA4DZ6N9","",1
+"2025-08-13 19:32:19",1755113539581,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",-1,"lfblc-1755113537831-a1ffc9221dda","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPGAE1GQ52HFJNA179WQB","",-1
+"2025-08-13 19:32:19",1755113539432,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.ico","GET","",500,"924g5-1755113539383-c24dd48c3df2","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",2006,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPHV8ADX2AC715K0JTKMP","",1
+"2025-08-13 19:32:19",1755113539290,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",-1,"5ptxh-1755113537225-8b83ce49c1bb","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPFQN9290G20YQJMSYKV1","",-1
+"2025-08-13 19:32:19",1755113539180,"visage-okf5l2d4a-site-jobs.vercel.app/favicon.ico","GET","",500,"d79c7-1755113539141-1ad1e8624da4","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1576,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPHKC8Z756T30FMC4HAQ7","",1
+"2025-08-13 19:32:19",1755113539048,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",-1,"68xhq-1755113537302-2916f262eb0d","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPFT36WJZRE9WCZ5DM5TZ","",-1
+"2025-08-13 19:32:18",1755113538147,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",-1,"4qfh2-1755113533907-784d388b70b6","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPCFQAYZT5H83MVPFB2Y5","",-1
+"2025-08-13 19:32:17",1755113537987,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",-1,"78r2v-1755113533241-39362adf4325","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPBZK2JM3Z529EE0Q83DR","",-1
+"2025-08-13 19:32:17",1755113537916,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",-1,"5k7b8-1755113533156-6c8052dda000","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPBZEJNZ6KY7KTH7KFWR7","",-1
+"2025-08-13 19:32:17",1755113537870,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",500,"lfblc-1755113537831-a1ffc9221dda","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1692,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPGAE1GQ52HFJNA179WQB","",1
+"2025-08-13 19:32:17",1755113537800,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",-1,"x85tr-1755113533852-e7dc02a42b21","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPCHK8CHAVQGNTA1KX4R6","",-1
+"2025-08-13 19:32:17",1755113537618,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",500,"d5fmt-1755113537575-563047838d4e","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1913,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPG2K2BZKVRDDWATD5XHA","",1
+"2025-08-13 19:32:17",1755113537425,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",-1,"xpskl-1755113533464-52e9709b7900","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",-1,"iad1",-1,-1,"Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 14, in <module>
+__vc_spec.loader.exec_module(__vc_module)
+File ""<frozen importlib._bootstrap_external>"", line 999, in exec_module
+File ""<frozen importlib._bootstrap>"", line 488, in _call_with_frames_removed
+File ""/var/task/main.py"", line 1, in <module>
+from app import app
+File ""/var/task/app.py"", line 25, in <module>
+raise ValueError(""DATABASE_URL environment variable is required"")
+ValueError: DATABASE_URL environment variable is required
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPC547MKSJSHXVXQRJ8RT","",-1
+"2025-08-13 19:32:17",1755113537346,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",500,"68xhq-1755113537302-2916f262eb0d","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1616,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPFT36WJZRE9WCZ5DM5TZ","",1
+"2025-08-13 19:32:17",1755113537269,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",500,"5ptxh-1755113537225-8b83ce49c1bb","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1995,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPFQN9290G20YQJMSYKV1","",1
+"2025-08-13 19:32:14",1755113534003,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",500,"x85tr-1755113533852-e7dc02a42b21","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1691,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPCHK8CHAVQGNTA1KX4R6","",1
+"2025-08-13 19:32:13",1755113533943,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",500,"4qfh2-1755113533907-784d388b70b6","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1833,"iad1",107,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPCFQAYZT5H83MVPFB2Y5","",1
+"2025-08-13 19:32:13",1755113533604,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",500,"xpskl-1755113533464-52e9709b7900","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1601,"iad1",107,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPC547MKSJSHXVXQRJ8RT","",1
+"2025-08-13 19:32:13",1755113533427,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",500,"78r2v-1755113533241-39362adf4325","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1972,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPBZK2JM3Z529EE0Q83DR","",1
+"2025-08-13 19:32:13",1755113533422,"visage-okf5l2d4a-site-jobs.vercel.app/","GET","",500,"5k7b8-1755113533156-6c8052dda000","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","visage-okf5l2d4a-site-jobs.vercel.app","visage-okf5l2d4a-site-jobs.vercel.app","dpl_B4py14DqFd2yc6LQhWgQBJMWeKet",1954,"iad1",106,2048,"","prj_31IpGVVMaJ0LXdAb91smzBgpKHQs","","","01K2JEPBZEJNZ6KY7KTH7KFWR7","",1

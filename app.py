@@ -20,12 +20,13 @@ app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-prod
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # configure the database - using PostgreSQL (Supabase)
+# VERCEL FIX: This prevents deployment crashes when DATABASE_URL is missing
 database_url = os.environ.get("DATABASE_URL")
 if not database_url:
     print("⚠️ WARNING: DATABASE_URL not found. Please configure it in your deployment platform.")
     print("For Vercel: Add DATABASE_URL in Environment Variables")
     print("For Replit: Add DATABASE_URL in Secrets")
-    # Use a placeholder for now to prevent crashes
+    # Use a placeholder for now to prevent crashes during build
     database_url = "postgresql://placeholder:placeholder@localhost:5432/placeholder"
 
 # Debug: verificar se a URL está configurada (sem mostrar a senha)
