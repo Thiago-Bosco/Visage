@@ -181,7 +181,56 @@ def products_list():
     per_page = 20
     products = Product.query.paginate(page=page, per_page=per_page, error_out=False)
     
-    html = '''
+    # Construir HTML com Python puro
+    products_rows = ""
+    for product in products.items:
+        # Determinar cor do badge do estoque
+        if product.stock_quantity <= 5:
+            stock_badge_color = "danger"
+        elif product.stock_quantity <= 10:
+            stock_badge_color = "warning"
+        else:
+            stock_badge_color = "success"
+        
+        # Imagem do produto
+        image_html = ""
+        if product.image_url:
+            image_html = f'<img src="{product.image_url}" alt="{product.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">'
+        else:
+            image_html = '''<div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 8px;">
+                                <i class="fas fa-image"></i>
+                            </div>'''
+        
+        # Status disponibilidade
+        status_html = '<span class="badge bg-success">Disponível</span>' if product.in_stock else '<span class="badge bg-danger">Indisponível</span>'
+        
+        products_rows += f'''
+        <tr>
+            <td>{image_html}</td>
+            <td><strong>{product.name}</strong></td>
+            <td><span class="badge bg-info">{product.category or 'Sem categoria'}</span></td>
+            <td><strong>R$ {product.price:.2f}</strong></td>
+            <td>
+                <span class="badge bg-{stock_badge_color}">
+                    {product.stock_quantity}
+                </span>
+            </td>
+            <td>{status_html}</td>
+            <td>
+                <div class="btn-group btn-group-sm">
+                    <a href="/admin/products/edit/{product.id}" class="btn btn-outline-primary">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="/admin/products/delete/{product.id}" class="btn btn-outline-danger"
+                       onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        '''
+    
+    html = f'''
     <!DOCTYPE html>
     <html>
     <head>
@@ -204,7 +253,7 @@ def products_list():
         
         <div class="container mt-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1><i class="fas fa-box"></i> Gerenciar Produtos</h1>
+                <h1><i class="fas fa-box"></i> Gerenciar Produtos ({products.total} produtos)</h1>
                 <a href="/admin/products/new" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Novo Produto
                 </a>
@@ -224,47 +273,7 @@ def products_list():
                         </tr>
                     </thead>
                     <tbody>
-                        {% for product in products.items %}
-                        <tr>
-                            <td>
-                                {% if product.image_url %}
-                                    <img src="{{ product.image_url }}" alt="{{ product.name }}" 
-                                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
-                                {% else %}
-                                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
-                                         style="width: 50px; height: 50px; border-radius: 8px;">
-                                        <i class="fas fa-image"></i>
-                                    </div>
-                                {% endif %}
-                            </td>
-                            <td><strong>{{ product.name }}</strong></td>
-                            <td><span class="badge bg-info">{{ product.category or 'Sem categoria' }}</span></td>
-                            <td><strong>R$ {{ "%.2f"|format(product.price) }}</strong></td>
-                            <td>
-                                <span class="badge bg-{% if product.stock_quantity <= 5 %}danger{% elif product.stock_quantity <= 10 %}warning{% else %}success{% endif %}">
-                                    {{ product.stock_quantity }}
-                                </span>
-                            </td>
-                            <td>
-                                {% if product.in_stock %}
-                                    <span class="badge bg-success">Disponível</span>
-                                {% else %}
-                                    <span class="badge bg-danger">Indisponível</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="/admin/products/edit/{{ product.id }}" class="btn btn-outline-primary">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="/admin/products/delete/{{ product.id }}" class="btn btn-outline-danger"
-                                       onclick="return confirm('Tem certeza que deseja excluir este produto?')">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
+                        {products_rows}
                     </tbody>
                 </table>
             </div>
@@ -272,7 +281,7 @@ def products_list():
     </body>
     </html>
     '''
-    return render_template_string(html, products=products)
+    return html
 
 @admin_bp.route('/products/new', methods=['GET', 'POST'])
 @login_required
