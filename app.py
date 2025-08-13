@@ -1,7 +1,7 @@
 import os
 import logging
 
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -93,20 +93,26 @@ def not_found_error(error):
 
 @app.errorhandler(500)
 def internal_error(error):
-    db.session.rollback()
+    try:
+        db.session.rollback()
+    except:
+        pass
     return render_template('error.html'), 500
 
 @app.errorhandler(Exception)
 def handle_exception(e):
     # Log interno para desenvolvedores
-    app.logger.error(f'Erro interno: {str(e)}')
+    logging.error(f'Erro interno: {str(e)}')
     
     # Mensagem amigável para usuários
     if hasattr(e, 'code') and e.code == 404:
         return render_template('error.html'), 404
     
     # Para outros erros, retornar mensagem genérica
-    db.session.rollback()
+    try:
+        db.session.rollback()
+    except:
+        pass
     return render_template('error.html'), 500
 
 # Configure Flask-WTF (CSRF disabled for now)
