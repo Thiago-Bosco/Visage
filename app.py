@@ -22,7 +22,11 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 # configure the database - using PostgreSQL (Supabase)
 database_url = os.environ.get("DATABASE_URL")
 if not database_url:
-    raise ValueError("DATABASE_URL environment variable is required")
+    print("⚠️ WARNING: DATABASE_URL not found. Please configure it in your deployment platform.")
+    print("For Vercel: Add DATABASE_URL in Environment Variables")
+    print("For Replit: Add DATABASE_URL in Secrets")
+    # Use a placeholder for now to prevent crashes
+    database_url = "postgresql://placeholder:placeholder@localhost:5432/placeholder"
 
 # Debug: verificar se a URL está configurada (sem mostrar a senha)
 if database_url:

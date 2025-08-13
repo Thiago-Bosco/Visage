@@ -6,18 +6,17 @@ Seu projeto está pronto para deploy na Vercel! Aqui estão os passos:
 
 ### 1. Configuração de Variáveis de Ambiente na Vercel
 
-Na dashboard da Vercel, configure estas variáveis:
+Na dashboard da Vercel, vá em **Settings > Environment Variables** e configure:
 
 ```
 SESSION_SECRET=seu-secret-key-aqui-minimo-32-caracteres
-DATABASE_URL=sua-url-do-banco-aqui
+DATABASE_URL=postgresql://postgres.fnwfjminutnkeuboskte:Th82918913%21%21%21%23@aws-0-us-east-2.pooler.supabase.com:6543/postgres
 FLASK_ENV=production
 ```
 
-**Importante:** Para produção, use um banco PostgreSQL como:
-- Supabase (gratuito): https://supabase.com
-- Railway: https://railway.app
-- Neon: https://neon.tech
+**⚠️ IMPORTANTE**: Use exatamente a mesma `DATABASE_URL` que está funcionando no Replit!
+
+**✅ SUPABASE JÁ CONFIGURADO**: Seu projeto já está usando Supabase PostgreSQL. Use a mesma URL nas variáveis da Vercel.
 
 ### 2. Arquivos Criados para Vercel
 
