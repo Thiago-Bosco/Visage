@@ -11,9 +11,5 @@
       "src": "/(.*)",
       "dest": "main.py"
     }
-  ],
-  "env": {
-    "FLASK_ENV": "production", 
-    "PYTHONPATH": "/var/task"
-  }
+  ]
 }

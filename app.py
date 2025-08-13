@@ -20,28 +20,17 @@ app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-prod
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # configure the database - using PostgreSQL (Supabase)
-# VERCEL FIX: This prevents deployment crashes when DATABASE_URL is missing
 database_url = os.environ.get("DATABASE_URL")
 if not database_url:
-    print("⚠️ WARNING: DATABASE_URL not found. Please configure it in your deployment platform.")
-    print("For Vercel: Add DATABASE_URL in Environment Variables")
-    print("For Replit: Add DATABASE_URL in Secrets")
-    # Use a placeholder for now to prevent crashes during build
-    database_url = "postgresql://placeholder:placeholder@localhost:5432/placeholder"
+    # Para produção, você deve configurar DATABASE_URL nas variáveis de ambiente
+    database_url = "sqlite:///fallback.db"  # Fallback temporário para builds
 
 # Debug: verificar se a URL está configurada (sem mostrar a senha)
-if database_url:
+if database_url and "supabase.com" in database_url:
     url_parts = database_url.split('@')
     if len(url_parts) > 1:
         host_part = url_parts[1]
         print(f"Conectando ao host: {host_part}")
-    else:
-        print("URL do banco configurada")
-else:
-    print("ERRO: DATABASE_URL não encontrada")
-
-# Configurar SSL para Supabase
-if "supabase.com" in database_url:
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url + "?sslmode=require"
 else:
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
