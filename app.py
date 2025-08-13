@@ -19,9 +19,12 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# configure the database - temporarily using SQLite while we test
-# PostgreSQL connection can be activated when credentials are confirmed working
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///barbershop.db"
+# configure the database - using PostgreSQL (Supabase)
+database_url = os.environ.get("DATABASE_URL")
+if not database_url:
+    raise ValueError("DATABASE_URL environment variable is required")
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_pre_ping": True,
     "pool_recycle": 300,
