@@ -19,7 +19,7 @@ O Visage é um sistema completo de gestão de estoque e vendas para distribuidor
 
 - Python 3.8+
 - Flask
-- SQLAlchemy
+- SQLAlchemy (PostgreSQL)
 - Flask-Admin
 - Outras dependências listadas em `pyproject.toml`
 
@@ -109,7 +109,7 @@ Acesse a área administrativa em `http://localhost:5000/admin` com as seguintes 
 
 1. **Erro ao ajustar estoque**: Verifique se a quantidade não deixará o estoque negativo
 2. **Imagens não aparecem**: Verifique se os arquivos estão no diretório correto em `static/images`
-3. **Erro de banco de dados**: O arquivo SQLite pode estar corrompido, faça backup e reinicie
+3. **Erro de banco de dados**: Verifique a conexão com o banco PostgreSQL e as credenciais
 
 ### Logs
 
