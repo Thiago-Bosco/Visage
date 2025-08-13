@@ -24,67 +24,106 @@ database_url = os.environ.get("DATABASE_URL")
 if not database_url:
     raise ValueError("DATABASE_URL environment variable is required")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+# Debug: verificar se a URL está configurada (sem mostrar a senha)
+if database_url:
+    url_parts = database_url.split('@')
+    if len(url_parts) > 1:
+        host_part = url_parts[1]
+        print(f"Conectando ao host: {host_part}")
+    else:
+        print("URL do banco configurada")
+else:
+    print("ERRO: DATABASE_URL não encontrada")
+
+# Configurar SSL para Supabase
+if "supabase.com" in database_url:
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url + "?sslmode=require"
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_pre_ping": True,
     "pool_recycle": 300,
-    "pool_timeout": 20,
+    "pool_timeout": 30,
+    "pool_size": 5,
+    "max_overflow": 10
 }
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # initialize the app with the extension
 db.init_app(app)
 
-with app.app_context():
-    # Import models to ensure tables are created
-    import models  # noqa: F401
+try:
+    with app.app_context():
+        # Import models to ensure tables are created
+        import models  # noqa: F401
+        
+        # Test connection first
+        from sqlalchemy import text
+        db.session.execute(text("SELECT 1"))
+        print("✅ Conexão com Supabase estabelecida com sucesso!")
+        
+        db.create_all()
+        
+        # Carregar apenas o admin customizado, sem Flask-Admin
+        try:
+            import admin_crud  # noqa: F401
+            print("Admin CRUD customizado carregado com sucesso!")
+        except Exception as e:
+            print(f"Erro ao carregar admin customizado: {e}")
+        
+        # Create admin user if none exists
+        from models import AdminUser
+        if AdminUser.query.count() == 0:
+            admin = AdminUser()
+            admin.username = 'visagecosmeticos'
+            admin.set_password('270174CLcl')
+            db.session.add(admin)
+            db.session.commit()
+            print("Usuário administrador criado: visagecosmeticos")
+        
+        # Create some initial products if none exist
+        from models import Product
+        if Product.query.count() == 0:
+            initial_products = []
+            
+            # Product 1
+            p1 = Product()
+            p1.name = "Suavecito Pomade Original"
+            p1.description = "Pomada à base d'água com fixação forte e brilho médio. Fácil de aplicar e remover."
+            p1.price = 45.90
+            p1.cost_price = 25.00
+            p1.stock_quantity = 50
+            p1.min_stock_level = 10
+            p1.max_stock_level = 100
+            p1.supplier = "Suavecito"
+            p1.sku = "SUV-POM-001"
+            p1.image_url = "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=300&h=300&fit=crop&auto=format"
+            p1.category = "Pomadas"
+            p1.in_stock = True
+            initial_products.append(p1)
+            
+            # Add the products to database
+            for product in initial_products:
+                db.session.add(product)
+            
+            db.session.commit()
+            logging.info("Produto inicial criado com sucesso!")
+
+except Exception as e:
+    print(f"❌ ERRO na conexão com Supabase: {str(e)}")
+    print("Verifique:")
+    print("1. Se a URL do Supabase está correta")
+    print("2. Se a senha está correta")
+    print("3. Se o banco permite conexões externas")
+    print("4. Se o projeto Supabase está ativo")
     
-    db.create_all()
-    
-    # Carregar apenas o admin customizado, sem Flask-Admin
+    # Import routes mesmo com erro de DB para mostrar página de erro
     try:
         import admin_crud  # noqa: F401
-        print("Admin CRUD customizado carregado com sucesso!")
-    except Exception as e:
-        print(f"Erro ao carregar admin customizado: {e}")
-    
-    # Create admin user if none exists
-    from models import AdminUser
-    if AdminUser.query.count() == 0:
-        admin = AdminUser()
-        admin.username = 'visagecosmeticos'
-        admin.set_password('270174CLcl')
-        db.session.add(admin)
-        db.session.commit()
-        print("Usuário administrador criado: visagecosmeticos")
-    
-    # Create some initial products if none exist
-    from models import Product
-    if Product.query.count() == 0:
-        initial_products = []
-        
-        # Product 1
-        p1 = Product()
-        p1.name = "Suavecito Pomade Original"
-        p1.description = "Pomada à base d'água com fixação forte e brilho médio. Fácil de aplicar e remover."
-        p1.price = 45.90
-        p1.cost_price = 25.00
-        p1.stock_quantity = 50
-        p1.min_stock_level = 10
-        p1.max_stock_level = 100
-        p1.supplier = "Suavecito"
-        p1.sku = "SUV-POM-001"
-        p1.image_url = "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=300&h=300&fit=crop&auto=format"
-        p1.category = "Pomadas"
-        p1.in_stock = True
-        initial_products.append(p1)
-        
-        # Simplify - just add the one product for now
-        for product in initial_products:
-            db.session.add(product)
-        
-        db.session.commit()
-        logging.info("Produto inicial criado com sucesso!")
+        from routes import *  # noqa: F401, F403
+    except:
+        pass
 
 # Configurar tratamento de erros globais para usuários finais
 @app.errorhandler(404)
@@ -111,5 +150,6 @@ def handle_exception(e):
 from flask_wtf.csrf import CSRFProtect
 # csrf = CSRFProtect(app)  # Disabled temporarily
 
-# Import routes apenas
-from routes import *  # noqa: F401, F403
+# Import routes apenas se não houve erro de DB
+if 'routes' not in locals():
+    from routes import *  # noqa: F401, F403
