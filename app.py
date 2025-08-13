@@ -93,10 +93,6 @@ def not_found_error(error):
 
 @app.errorhandler(500)
 def internal_error(error):
-    try:
-        db.session.rollback()
-    except:
-        pass
     return render_template('error.html'), 500
 
 @app.errorhandler(Exception)
@@ -109,10 +105,6 @@ def handle_exception(e):
         return render_template('error.html'), 404
     
     # Para outros erros, retornar mensagem genérica
-    try:
-        db.session.rollback()
-    except:
-        pass
     return render_template('error.html'), 500
 
 # Configure Flask-WTF (CSRF disabled for now)
