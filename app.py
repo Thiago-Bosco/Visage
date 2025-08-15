@@ -19,12 +19,29 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# Configuração do banco - SOMENTE Supabase/PostgreSQL
+# Database configuration - PostgreSQL/Supabase only
 database_url = os.environ.get("DATABASE_URL")
-if not database_url:
-    raise RuntimeError("❌ Variável DATABASE_URL não configurada! Configure para o Supabase.")
 
-# Garantir SSL no Supabase
+if not database_url:
+    print("⚠️  DATABASE_URL não configurada!")
+    print("Para usar a aplicação, configure a variável de ambiente DATABASE_URL com sua URL do Supabase:")
+    print("Exemplo: DATABASE_URL=postgresql://user:password@host:port/database")
+    print("Para desenvolvimento local, você pode usar um arquivo .env")
+    
+    # For development, you can create a .env file with your DATABASE_URL
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+        database_url = os.environ.get("DATABASE_URL")
+        if database_url:
+            print("✅ DATABASE_URL carregada do arquivo .env")
+    except ImportError:
+        pass
+    
+    if not database_url:
+        raise RuntimeError("❌ DATABASE_URL não configurada! Configure para o Supabase.")
+
+# Ensure SSL for Supabase
 if "supabase.co" in database_url and "?sslmode=require" not in database_url:
     database_url += "?sslmode=require"
 
