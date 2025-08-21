@@ -9,6 +9,27 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
+# Production security configuration
+class ProductionConfig:
+    def __init__(self, app):
+        # Security headers
+        @app.after_request
+        def security_headers(response):
+            response.headers['X-Content-Type-Options'] = 'nosniff'
+            response.headers['X-Frame-Options'] = 'DENY'
+            response.headers['X-XSS-Protection'] = '1; mode=block'
+            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+            return response
+        
+        # Disable debug mode in production
+        app.config['DEBUG'] = False
+        app.config['TESTING'] = False
+        
+        # Session configuration for production
+        app.config['SESSION_COOKIE_SECURE'] = True
+        app.config['SESSION_COOKIE_HTTPONLY'] = True
+        app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
 class Base(DeclarativeBase):
     pass
 
@@ -16,8 +37,13 @@ db = SQLAlchemy(model_class=Base)
 
 # Create Flask app without instance_path to avoid read-only filesystem issues
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
+app.secret_key = os.environ.get("SESSION_SECRET")
+if not app.secret_key:
+    raise RuntimeError("❌ SESSION_SECRET não configurada! Configure para produção.")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+# Apply production security configuration
+production_config = ProductionConfig(app)
 
 # Database configuration - PostgreSQL/Supabase only
 database_url = os.environ.get("DATABASE_URL")
@@ -92,14 +118,19 @@ def init_database():
                 print(f"Info: Colunas de imagem já existem ou erro: {e}")
                 db.session.rollback()
 
-            # Create initial admin user
+            # Create initial admin user from environment variables
             from models import AdminUser
             if AdminUser.query.count() == 0:
-                admin = AdminUser(username='visagecosmeticos')
-                admin.set_password('270174CLcl')
-                db.session.add(admin)
-                db.session.commit()
-                print("Usuário administrador criado: visagecosmeticos")
+                admin_username = os.environ.get("ADMIN_USERNAME")
+                admin_password = os.environ.get("ADMIN_PASSWORD")
+                if admin_username and admin_password:
+                    admin = AdminUser(username=admin_username)
+                    admin.set_password(admin_password)
+                    db.session.add(admin)
+                    db.session.commit()
+                    print("✅ Usuário administrador criado")
+                else:
+                    print("⚠️ ADMIN_USERNAME e ADMIN_PASSWORD não configurados")
 
             # Create initial product
             from models import Product
