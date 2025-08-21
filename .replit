@@ -1,5 +1,5 @@
 modules = ["python-3.11", "web", "nodejs-20"]
-run = "python3 manage.py runserver 0.0.0.0:3000"
+run = "python app.py"
 
 [nix]
 channel = "stable-25_05"
