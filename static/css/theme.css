@@ -1,4 +1,4 @@
-/* Visage Distribuidora - Tema Unificado */
+/* Visage Distribuidora - Tema Unificado (Sem Azul) */
 
 :root {
     --primary-dark: #1a1611;
@@ -7,6 +7,14 @@
     --gold-bright: #FFD700;
     --gradient-gold: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
     --gradient-dark: linear-gradient(135deg, #1a1611 0%, #2a2520 50%, #1a1611 100%);
+    
+    /* Override Bootstrap blue colors */
+    --bs-primary: #D4AF37;
+    --bs-primary-rgb: 212, 175, 55;
+    --bs-secondary: #2a2520;
+    --bs-secondary-rgb: 42, 37, 32;
+    --bs-dark: #1a1611;
+    --bs-dark-rgb: 26, 22, 17;
 }
 
 /* Base Theme Override */

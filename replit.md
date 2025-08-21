@@ -126,6 +126,16 @@ The application is designed to be easily deployable on platforms like Replit, He
 
 ## Recent Changes (August 21, 2025)
 
+- ✅ **Theme unificado implementado (August 21, 2025)**
+  - Removido Bootstrap com tons azuis que causava conflito entre Replit/Vercel
+  - Consolidado CSS em theme.css com tema dourado/marrom exclusivo
+  - Eliminadas variações de cor entre ambientes de deploy
+  - CSS limpo sem conflitos, garantindo consistência visual
+- ✅ **Configuração de produção implementada (August 21, 2025)**
+  - Credenciais movidas para variáveis de ambiente seguras
+  - Cabeçalhos de segurança HTTP implementados
+  - Debug mode desabilitado em produção
+  - Configuração de cookies seguros
 - ✅ **Database image storage system implemented (August 21, 2025)**
   - Added BYTEA columns to products table for image storage
   - Created /product_image/<id> route to serve images from database
