@@ -37,7 +37,8 @@
                                 <img src="{{ item.product.image_url or 'https://via.placeholder.com/100x100/8B4513/FFFFFF?text=Produto' }}" 
                                      class="img-fluid rounded" 
                                      alt="{{ item.product.name }}"
-                                     style="height: 80px; width: 80px; object-fit: cover;">
+                                     style="height: 80px; width: 80px; object-fit: cover;"
+                                     onerror="this.src='https://via.placeholder.com/100x100/8B4513/FFFFFF?text=Produto'">
                             </div>
                             <div class="col-md-4">
                                 <h6 class="fw-bold mb-1">{{ item.product.name }}</h6>

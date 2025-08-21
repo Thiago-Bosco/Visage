@@ -179,7 +179,12 @@ def index():
 def products_list():
     page = request.args.get('page', 1, type=int)
     per_page = 20
-    products = Product.query.paginate(page=page, per_page=per_page, error_out=False)
+    products = Product.query.paginate(
+        page=page, 
+        per_page=per_page, 
+        error_out=False,
+        max_per_page=100
+    )
     
     # Construir HTML com Python puro
     products_rows = ""
@@ -192,10 +197,16 @@ def products_list():
         else:
             stock_badge_color = "success"
         
-        # Imagem do produto
+        # Imagem do produto com tratamento de erro
         image_html = ""
         if product.image_url:
-            image_html = f'<img src="{product.image_url}" alt="{product.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">'
+            # Escape das aspas para evitar problemas no HTML
+            safe_image_url = product.image_url.replace('"', '&quot;')
+            safe_alt_text = product.name.replace('"', '&quot;') if product.name else 'Produto'
+            image_html = f'<img src="{safe_image_url}" alt="{safe_alt_text}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">'
+            image_html += '''<div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 8px; display: none;">
+                                <i class="fas fa-image"></i>
+                            </div>'''
         else:
             image_html = '''<div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 8px;">
                                 <i class="fas fa-image"></i>
@@ -328,7 +339,8 @@ def products_new():
             flash('Erro ao criar produto. Verifique os dados e tente novamente.', 'error')
             db.session.rollback()
             # Log interno apenas no servidor
-            print(f"[ADMIN] Erro ao criar produto: {str(e)}")
+            import logging
+            logging.error(f"[ADMIN] Erro ao criar produto: {str(e)}")
     
     html = '''
     <!DOCTYPE html>
@@ -561,8 +573,10 @@ def products_edit(id):
             return redirect(url_for('admin_crud.products_list'))
             
         except Exception as e:
-            flash(f'Erro ao atualizar produto: {str(e)}', 'error')
+            flash('Erro ao atualizar produto. Verifique os dados e tente novamente.', 'error')
             db.session.rollback()
+            import logging
+            logging.error(f"[ADMIN] Erro ao atualizar produto: {str(e)}")
     
     html = '''
     <!DOCTYPE html>
@@ -734,7 +748,12 @@ def products_edit(id):
                         <div class="card-body text-center">
                             {% if product.image_url %}
                                 <img src="{{ product.image_url }}" alt="{{ product.name }}" 
-                                     class="img-fluid rounded" style="max-height: 200px;">
+                                     class="img-fluid rounded" style="max-height: 200px;"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="bg-light d-flex align-items-center justify-content-center" 
+                                     style="height: 200px; border-radius: 8px; display: none;">
+                                    <i class="fas fa-image fa-3x text-muted"></i>
+                                </div>
                             {% else %}
                                 <div class="bg-light d-flex align-items-center justify-content-center" 
                                      style="height: 200px; border-radius: 8px;">
@@ -771,12 +790,21 @@ def products_edit(id):
 def products_delete(id):
     product = Product.query.get_or_404(id)
     try:
+        # Remove imagem local se existir
+        if product.image_url and '/static/uploads/' in product.image_url:
+            old_file = product.image_url.replace('/static/uploads/', '')
+            old_path = os.path.join(UPLOAD_FOLDER, old_file)
+            if os.path.exists(old_path):
+                os.remove(old_path)
+        
         db.session.delete(product)
         db.session.commit()
         flash('Produto excluído com sucesso!', 'success')
     except Exception as e:
-        flash(f'Erro ao excluir produto: {str(e)}', 'error')
+        flash('Erro ao excluir produto. Tente novamente.', 'error')
         db.session.rollback()
+        import logging
+        logging.error(f"[ADMIN] Erro ao excluir produto: {str(e)}")
     
     return redirect(url_for('admin_crud.products_list'))
 
@@ -785,7 +813,12 @@ def products_delete(id):
 def orders_list():
     page = request.args.get('page', 1, type=int)
     per_page = 20
-    orders = Order.query.order_by(Order.created_at.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    orders = Order.query.order_by(Order.created_at.desc()).paginate(
+        page=page, 
+        per_page=per_page, 
+        error_out=False,
+        max_per_page=100
+    )
     
     html = '''
     <!DOCTYPE html>

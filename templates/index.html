@@ -84,7 +84,8 @@
                         <img src="{{ product.image_url or 'https://via.placeholder.com/300x300/8B4513/FFFFFF?text=Produto' }}" 
                              class="card-img-top" 
                              alt="{{ product.name }}"
-                             style="height: 250px; object-fit: cover;">
+                             style="height: 250px; object-fit: cover;"
+                             onerror="this.src='https://via.placeholder.com/300x300/8B4513/FFFFFF?text=Produto'">
                         
                         {% if product.category %}
                         <span class="badge bg-secondary position-absolute top-0 end-0 m-2">
