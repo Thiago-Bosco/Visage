@@ -23,8 +23,31 @@
         <!-- Custom CSS -->
         <link
             rel="stylesheet"
-            href="{{ url_for('static', filename='css/theme.css') }}?v=2.0"
+            href="{{ url_for('static', filename='css/theme.css') }}?v=3.0"
         />
+        
+        <!-- FORÇA ABSOLUTA TEMA DOURADO - CSS INLINE PARA VERCEL -->
+        <style>
+        /* MATA AZUL BOOTSTRAP IMEDIATAMENTE */
+        .btn-primary, button.btn-primary, .btn.btn-primary, a.btn-primary,
+        input[type="submit"].btn-primary, .bg-primary {
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%) !important;
+            background-color: #D4AF37 !important;
+            border-color: #D4AF37 !important;
+            color: #1a1611 !important;
+        }
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%) !important;
+            background-color: #FFD700 !important;
+            border-color: #FFD700 !important;
+            color: #1a1611 !important;
+        }
+        /* FORCE OVERRIDE */
+        :root {
+            --bs-primary: #D4AF37 !important;
+            --bs-primary-rgb: 212, 175, 55 !important;
+        }
+        </style>
 
 
         <!-- Favicon -->

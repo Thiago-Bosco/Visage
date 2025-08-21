@@ -1,4 +1,4 @@
-/* Visage Distribuidora - TEMA DOURADO ÚNICO - Cache v2.0 */
+/* Visage Distribuidora - FORÇA TOTAL DOURADO - Cache v3.0 - ANTI-AZUL */
 
 :root {
     --primary-dark: #1a1611;
@@ -59,10 +59,13 @@ html[data-bs-theme="dark"] {
     color: var(--accent-gold) !important;
 }
 
-/* Buttons */
-.btn-primary {
+/* FORÇA TOTAL BOTÕES DOURADOS - REMOVE QUALQUER AZUL */
+.btn-primary, button.btn-primary, input[type="submit"].btn-primary, 
+a.btn-primary, .btn.btn-primary {
     background: var(--gradient-gold) !important;
-    border: none !important;
+    background-color: var(--accent-gold) !important;
+    border: 2px solid var(--accent-gold) !important;
+    border-color: var(--accent-gold) !important;
     color: #1a1611 !important;
     font-weight: 600;
     text-transform: uppercase;
@@ -72,10 +75,21 @@ html[data-bs-theme="dark"] {
     transition: all 0.3s ease;
 }
 
-.btn-primary:hover {
+.btn-primary:hover, button.btn-primary:hover, input[type="submit"].btn-primary:hover,
+a.btn-primary:hover, .btn.btn-primary:hover,
+.btn-primary:focus, .btn-primary:active {
     background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%) !important;
+    background-color: var(--gold-bright) !important;
+    border-color: var(--gold-bright) !important;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+    color: #1a1611 !important;
+}
+
+/* ANULA COMPLETAMENTE QUALQUER AZUL DO BOOTSTRAP */
+.btn-primary:not(.btn-outline):not(.btn-link) {
+    background: var(--gradient-gold) !important;
+    border-color: var(--accent-gold) !important;
     color: #1a1611 !important;
 }
 
@@ -197,12 +211,28 @@ html[data-bs-theme="dark"] {
     50% { transform: translateY(-20px) rotate(10deg); }
 }
 
-/* FORÇA TEMA DOURADO - Remove completamente qualquer azul */
-.bg-primary, .btn-primary, .badge-primary, .text-primary {
+/* FORÇA TEMA DOURADO - MATA TODO AZUL BOOTSTRAP */
+.bg-primary, .btn-primary, .badge-primary, .text-primary,
+.alert-primary, .border-primary, .navbar-brand .text-primary {
     background: var(--gradient-gold) !important;
     background-color: var(--accent-gold) !important;
     border-color: var(--accent-gold) !important;
     color: #1a1611 !important;
+}
+
+/* MATA AZUL EM TODOS OS ESTADOS */
+.btn-primary, .btn-primary:hover, .btn-primary:focus, 
+.btn-primary:active, .btn-primary:visited {
+    background: var(--gradient-gold) !important;
+    background-color: var(--accent-gold) !important;
+    border-color: var(--accent-gold) !important;
+    color: #1a1611 !important;
+}
+
+/* REMOVE AZUL DE FOCUS E OUTLINE */
+.btn-primary:focus-visible {
+    outline: 2px solid var(--accent-gold) !important;
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25) !important;
 }
 
 .bg-dark {
