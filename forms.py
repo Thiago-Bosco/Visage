@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, IntegerField, FloatField, TextAreaField, BooleanField, SelectField, PasswordField
 from wtforms.validators import DataRequired, NumberRange, Length, Optional
 
@@ -28,6 +29,10 @@ class ProductForm(FlaskForm):
     image_url = StringField('URL da Imagem', validators=[
         Optional(),
         Length(max=255, message='URL deve ter no máximo 255 caracteres')
+    ])
+    image_file = FileField('Upload de Imagem', validators=[
+        Optional(),
+        FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Apenas imagens são permitidas!')
     ])
     category = SelectField('Categoria', choices=[
         ('Pomadas', 'Pomadas'),

@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request, session
+from flask import render_template, redirect, url_for, flash, request, session, Response
 from app import app, db
 from models import Product, CartItem, Order, OrderItem, StockMovement
 from forms import CheckoutForm, AddToCartForm
@@ -257,3 +257,27 @@ def clear_cart():
 
     flash('Carrinho limpo!', 'info')
     return redirect(url_for('cart'))
+
+
+@app.route('/product_image/<int:product_id>')
+def serve_product_image(product_id):
+    """Serve product image from database"""
+    try:
+        product = Product.query.get_or_404(product_id)
+        
+        if not product.image_data:
+            # Redirect to placeholder if no image data
+            return redirect('https://via.placeholder.com/300x300/8B4513/FFFFFF?text=Produto')
+        
+        # Serve image from database
+        return Response(
+            product.image_data,
+            mimetype=product.image_mimetype or 'image/jpeg',
+            headers={
+                'Content-Disposition': f'inline; filename="{product.image_filename or "product.jpg"}"',
+                'Cache-Control': 'public, max-age=3600'  # Cache for 1 hour
+            }
+        )
+    except Exception as e:
+        logging.error(f"Erro ao servir imagem do produto {product_id}: {e}")
+        return redirect('https://via.placeholder.com/300x300/8B4513/FFFFFF?text=Produto')

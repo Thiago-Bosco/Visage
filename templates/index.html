@@ -81,7 +81,7 @@
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100 shadow-sm product-card">
                     <div class="card-img-top-wrapper">
-                        <img src="{{ product.image_url or 'https://via.placeholder.com/300x300/8B4513/FFFFFF?text=Produto' }}" 
+                        <img src="{{ get_image_url(product) }}" 
                              class="card-img-top" 
                              alt="{{ product.name }}"
                              style="height: 250px; object-fit: cover;"

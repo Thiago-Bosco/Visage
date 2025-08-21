@@ -12,6 +12,9 @@ class Product(db.Model):
     description = db.Column(Text, nullable=True)
     price = db.Column(db.Float, nullable=False)
     image_url = db.Column(db.String(255), nullable=True)
+    image_data = db.Column(db.LargeBinary, nullable=True)  # Store image as BLOB
+    image_filename = db.Column(db.String(255), nullable=True)  # Original filename
+    image_mimetype = db.Column(db.String(100), nullable=True)  # MIME type
     category = db.Column(db.String(50), nullable=True)
     in_stock = db.Column(db.Boolean, default=True)
     

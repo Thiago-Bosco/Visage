@@ -71,6 +71,26 @@ def init_database():
 
             # Create tables (only if they don't exist in Supabase)
             db.create_all()
+            
+            # Add new image columns to existing products table if they don't exist
+            try:
+                from sqlalchemy import text
+                # Check if image_data column exists
+                result = db.session.execute(text("""
+                    SELECT column_name FROM information_schema.columns 
+                    WHERE table_name = 'products' AND column_name = 'image_data'
+                """)).fetchone()
+                
+                if not result:
+                    # Add new columns for image storage
+                    db.session.execute(text("ALTER TABLE products ADD COLUMN image_data BYTEA"))
+                    db.session.execute(text("ALTER TABLE products ADD COLUMN image_filename VARCHAR(255)"))
+                    db.session.execute(text("ALTER TABLE products ADD COLUMN image_mimetype VARCHAR(100)"))
+                    db.session.commit()
+                    print("✅ Colunas de imagem adicionadas à tabela products")
+            except Exception as e:
+                print(f"Info: Colunas de imagem já existem ou erro: {e}")
+                db.session.rollback()
 
             # Create initial admin user
             from models import AdminUser
@@ -137,3 +157,9 @@ def handle_exception(e):
 # Importa rotas apenas se não foi importado antes
 if 'routes' not in locals():
     from routes import *
+
+# Template helper functions
+@app.context_processor
+def inject_helpers():
+    from helpers import get_image_url
+    return dict(get_image_url=get_image_url)

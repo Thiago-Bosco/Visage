@@ -197,10 +197,15 @@ def products_list():
         else:
             stock_badge_color = "success"
         
-        # Imagem do produto com tratamento de erro
+        # Imagem do produto com tratamento para banco ou URL
         image_html = ""
-        if product.image_url:
-            # Escape das aspas para evitar problemas no HTML
+        if product.image_data:
+            # Imagem do banco de dados
+            image_url = f'/product_image/{product.id}'
+            safe_alt_text = product.name.replace('"', '&quot;') if product.name else 'Produto'
+            image_html = f'<img src="{image_url}" alt="{safe_alt_text}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">'
+        elif product.image_url:
+            # Imagem via URL externa
             safe_image_url = product.image_url.replace('"', '&quot;')
             safe_alt_text = product.name.replace('"', '&quot;') if product.name else 'Produto'
             image_html = f'<img src="{safe_image_url}" alt="{safe_alt_text}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">'
@@ -301,15 +306,20 @@ def products_new():
         try:
             image_url = request.form.get('image_url')
             
-            # Verificar se há upload de imagem
+            # Processar upload de imagem para salvar no banco
+            image_data = None
+            image_filename = None
+            image_mimetype = None
+            
             if 'image_file' in request.files:
                 file = request.files['image_file']
                 if file and file.filename != '' and allowed_file(file.filename):
-                    # Gerar nome único para o arquivo
-                    filename = str(uuid.uuid4()) + '_' + secure_filename(file.filename)
-                    file_path = os.path.join(UPLOAD_FOLDER, filename)
-                    file.save(file_path)
-                    image_url = f'/static/uploads/{filename}'
+                    # Ler dados da imagem
+                    image_data = file.read()
+                    image_filename = secure_filename(file.filename)
+                    image_mimetype = file.mimetype
+                    # Não usar image_url quando temos dados no banco
+                    image_url = None
             
             # Criar novo produto
             product = Product()
@@ -323,6 +333,9 @@ def products_new():
             product.supplier = request.form.get('supplier')
             product.sku = request.form.get('sku') or ""
             product.image_url = image_url
+            product.image_data = image_data
+            product.image_filename = image_filename 
+            product.image_mimetype = image_mimetype
             product.category = request.form.get('category')
             product.in_stock = request.form.get('in_stock') == 'on'
             
@@ -535,22 +548,16 @@ def products_edit(id):
         try:
             image_url = request.form.get('image_url')
             
-            # Verificar se há upload de nova imagem
+            # Processar upload de nova imagem para banco
             if 'image_file' in request.files:
                 file = request.files['image_file']
                 if file and file.filename != '' and allowed_file(file.filename):
-                    # Gerar nome único para o arquivo
-                    filename = str(uuid.uuid4()) + '_' + secure_filename(file.filename)
-                    file_path = os.path.join(UPLOAD_FOLDER, filename)
-                    file.save(file_path)
-                    image_url = f'/static/uploads/{filename}'
-                    
-                    # Remover imagem antiga se for local
-                    if product.image_url and '/static/uploads/' in product.image_url:
-                        old_file = product.image_url.replace('/static/uploads/', '')
-                        old_path = os.path.join(UPLOAD_FOLDER, old_file)
-                        if os.path.exists(old_path):
-                            os.remove(old_path)
+                    # Salvar imagem no banco
+                    product.image_data = file.read()
+                    product.image_filename = secure_filename(file.filename)
+                    product.image_mimetype = file.mimetype
+                    # Limpar URL externa se houver upload
+                    image_url = None
             
             # Atualizar produto
             product.name = request.form.get('name')
@@ -562,7 +569,9 @@ def products_edit(id):
             product.max_stock_level = int(request.form.get('max_stock_level', 100))
             product.supplier = request.form.get('supplier')
             product.sku = request.form.get('sku')
-            product.image_url = image_url or product.image_url  # Manter imagem atual se não houver nova
+            # Atualizar URL da imagem apenas se houver nova URL
+            if image_url is not None:
+                product.image_url = image_url
             product.category = request.form.get('category')
             product.in_stock = request.form.get('in_stock') == 'on'
             product.updated_at = datetime.utcnow()
