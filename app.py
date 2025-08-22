@@ -1,6 +1,13 @@
 import os
 import logging
 
+# Load environment variables from .env file first
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -55,14 +62,10 @@ if not database_url:
     print("Para desenvolvimento local, você pode usar um arquivo .env")
     
     # For development, you can create a .env file with your DATABASE_URL
-    try:
-        from dotenv import load_dotenv
-        load_dotenv()
-        database_url = os.environ.get("DATABASE_URL")
-        if database_url:
-            print("✅ DATABASE_URL carregada do arquivo .env")
-    except ImportError:
-        pass
+    # dotenv already loaded at the top of the file
+    database_url = os.environ.get("DATABASE_URL")
+    if database_url:
+        print("✅ DATABASE_URL carregada do arquivo .env")
     
     if not database_url:
         raise RuntimeError("❌ DATABASE_URL não configurada! Configure para o Supabase.")
