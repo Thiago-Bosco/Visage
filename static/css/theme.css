@@ -47,13 +47,22 @@ section.bg-light {
     background: var(--secondary-dark) !important;
 }
 
-/* MATA TEXTO CINZA - FORÇA DOURADO */
-.text-muted {
+/* 🔥 EXTERMINADOR TOTAL DE CINZA - FORÇA DOURADO ABSOLUTO */
+.text-muted, .text-light-gray, .text-secondary, 
+.small.text-muted, p.text-muted, span.text-muted {
     color: rgba(212, 175, 55, 0.8) !important;
 }
 
-.text-light-gray {
-    color: rgba(212, 175, 55, 0.9) !important;
+/* FORÇA TODAS AS CORES BOOTSTRAP PARA DOURADO */
+.text-primary { color: var(--accent-gold) !important; }
+.text-info { color: var(--accent-gold) !important; }
+.text-light { color: rgba(212, 175, 55, 0.9) !important; }
+.text-dark { color: #1a1611 !important; }
+
+/* MATA SEÇÃO BG-LIGHT QUE ESTÁ CINZA */
+section.bg-light, .bg-light, div.bg-light {
+    background: var(--secondary-dark) !important;
+    background-color: var(--secondary-dark) !important;
 }
 
 /* Navigation */
@@ -279,12 +288,23 @@ a.btn-primary:hover, .btn.btn-primary:hover,
     color: #1a1611 !important;
 }
 
-/* Badge overrides - FORÇA TODOS DOURADOS */
+/* 🔥 EXTERMINADOR TOTAL DE BACKGROUNDS CINZAS */
 .badge.bg-secondary, .badge.bg-info, .badge.bg-light,
-.bg-secondary, .bg-info, .bg-light {
+.bg-secondary, .bg-info, .bg-light, .bg-body, .bg-body-secondary,
+section.bg-light, div.bg-light, .card-header.bg-primary,
+.alert.alert-info, .card.bg-light {
     background: rgba(212, 175, 55, 0.2) !important;
+    background-color: rgba(212, 175, 55, 0.2) !important;
     color: var(--accent-gold) !important;
     border: 1px solid var(--accent-gold) !important;
+}
+
+/* FORÇA CARDS E HEADERS DOURADOS */
+.card-header.bg-success, .card-header.bg-dark, .card-header.bg-primary {
+    background: var(--secondary-dark) !important;
+    background-color: var(--secondary-dark) !important;
+    color: var(--accent-gold) !important;
+    border-bottom: 2px solid var(--accent-gold) !important;
 }
 
 .badge.bg-success {
