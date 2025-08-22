@@ -25,10 +25,20 @@ body {
     padding-top: 80px;
 }
 
-html[data-bs-theme="dark"] {
-    --bs-dark: var(--primary-dark);
-    --bs-body-bg: var(--primary-dark);
-    --bs-body-color: #f8f9fa;
+/* FORÇA BACKGROUND DOURADO EM QUALQUER SITUAÇÃO */
+html, body {
+    background: var(--gradient-dark) !important;
+    background-color: var(--primary-dark) !important;
+}
+
+/* Override Bootstrap defaults completely */
+.bg-body, .bg-body-secondary, .bg-body-tertiary {
+    background: var(--gradient-dark) !important;
+}
+
+/* Hero and sections background */
+.hero-section, .bg-dark, section {
+    background: var(--gradient-dark) !important;
 }
 
 /* Navigation */

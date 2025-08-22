@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR" data-bs-theme="dark">
+<html lang="pt-BR">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -42,10 +42,16 @@
             border-color: #FFD700 !important;
             color: #1a1611 !important;
         }
-        /* FORCE OVERRIDE */
+        /* FORCE OVERRIDE BOOTSTRAP COLORS */
         :root {
             --bs-primary: #D4AF37 !important;
             --bs-primary-rgb: 212, 175, 55 !important;
+            --bs-body-bg: #1a1611 !important;
+            --bs-dark: #1a1611 !important;
+        }
+        /* FORÇA BACKGROUND DOURADO */
+        html, body {
+            background: linear-gradient(135deg, #1a1611 0%, #2a2520 50%, #1a1611 100%) !important;
         }
         </style>
 
