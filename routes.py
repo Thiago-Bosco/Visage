@@ -288,14 +288,40 @@ def serve_product_image(product_id):
 def serve_static_files(filename):
     """Serve static files for Vercel deployment"""
     import os
-    from flask import send_from_directory
+    from flask import send_from_directory, Response
     
     try:
         # Get the absolute path to the static directory
         static_dir = os.path.join(os.path.dirname(__file__), 'static')
-        return send_from_directory(static_dir, filename)
+        
+        # Check if file exists
+        file_path = os.path.join(static_dir, filename)
+        if not os.path.exists(file_path):
+            logging.warning(f"Arquivo estático não encontrado: {filename}")
+            from flask import abort
+            abort(404)
+        
+        # Set proper content type based on file extension
+        content_type = 'text/plain'
+        if filename.endswith('.css'):
+            content_type = 'text/css'
+        elif filename.endswith('.js'):
+            content_type = 'application/javascript'
+        elif filename.endswith('.png'):
+            content_type = 'image/png'
+        elif filename.endswith('.jpg') or filename.endswith('.jpeg'):
+            content_type = 'image/jpeg'
+        elif filename.endswith('.gif'):
+            content_type = 'image/gif'
+        elif filename.endswith('.svg'):
+            content_type = 'image/svg+xml'
+        
+        response = send_from_directory(static_dir, filename)
+        response.headers['Content-Type'] = content_type
+        response.headers['Cache-Control'] = 'public, max-age=3600'
+        return response
+        
     except Exception as e:
         logging.error(f"Erro ao servir arquivo estático {filename}: {e}")
-        # Return 404 for missing static files
         from flask import abort
         abort(404)

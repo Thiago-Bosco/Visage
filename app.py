@@ -43,7 +43,7 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 
 # Create Flask app without instance_path to avoid read-only filesystem issues
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.secret_key = os.environ.get("SESSION_SECRET")
 if not app.secret_key:
     raise RuntimeError("❌ SESSION_SECRET não configurada! Configure para produção.")
