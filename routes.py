@@ -281,3 +281,21 @@ def serve_product_image(product_id):
     except Exception as e:
         logging.error(f"Erro ao servir imagem do produto {product_id}: {e}")
         return redirect('https://via.placeholder.com/300x300/8B4513/FFFFFF?text=Produto')
+
+
+# Static file serving route for Vercel compatibility
+@app.route('/static/<path:filename>')
+def serve_static_files(filename):
+    """Serve static files for Vercel deployment"""
+    import os
+    from flask import send_from_directory
+    
+    try:
+        # Get the absolute path to the static directory
+        static_dir = os.path.join(os.path.dirname(__file__), 'static')
+        return send_from_directory(static_dir, filename)
+    except Exception as e:
+        logging.error(f"Erro ao servir arquivo estático {filename}: {e}")
+        # Return 404 for missing static files
+        from flask import abort
+        abort(404)

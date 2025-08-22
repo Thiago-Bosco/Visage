@@ -7,8 +7,8 @@ try:
 except Exception as e:
     print(f"Warning: Database initialization failed: {e}")
 
-# For Vercel
-application = app
+# For Vercel - this is the main entry point
+app = app
 
 if __name__ == '__main__':
     # Initialize database for local development
